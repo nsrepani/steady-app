@@ -534,6 +534,36 @@
     background: var(--coral-muted);
     color: var(--sand);
   }
+
+  /* Countdown */
+  .countdown-card {
+    background: linear-gradient(160deg, #1a3535, #14282f);
+    border-color: rgba(44,90,86,0.5);
+  }
+  .countdown-title { color: var(--sand); font-size: 24px; }
+  .countdown-timer {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--amber);
+    margin: 18px 0 14px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+  .countdown-bar-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(240,234,217,0.1);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .countdown-bar-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #2c5a56, #d9a441);
+    transition: width 1s linear;
+  }
 </style>
 </head>
 <body>
@@ -645,6 +675,17 @@
   <div class="toast-text">
     <div class="toast-title" id="toastTitle">Milestone reached!</div>
     <div class="toast-sub">Go treat yourself and family</div>
+  </div>
+</div>
+
+<div class="celebration-backdrop" id="countdownModal">
+  <div class="celebration-card countdown-card">
+    <div class="celebration-emoji" id="cdEmoji">🌊</div>
+    <div class="celebration-title countdown-title" id="cdTitle">Stay with it</div>
+    <div class="celebration-sub" id="cdSub">Urges peak and fade on their own. Give it this time — you don't have to do anything else right now.</div>
+    <div class="countdown-timer" id="cdTimer">20:00</div>
+    <div class="countdown-bar-track"><div class="countdown-bar-fill" id="cdBarFill"></div></div>
+    <button class="btn-set" id="closeCountdown">I'll keep this open</button>
   </div>
 </div>
 
@@ -919,7 +960,85 @@ document.getElementById('openUrge').onclick = () => {
   urgeModal.classList.add('open');
 };
 document.getElementById('closeUrge').onclick = () => urgeModal.classList.remove('open');
-document.getElementById('urgeCalledSomeone').onclick = () => urgeModal.classList.remove('open');
+document.getElementById('urgeCalledSomeone').onclick = () => {
+  urgeModal.classList.remove('open');
+  startUrgeCountdown();
+};
+
+let countdownInterval = null;
+function startUrgeCountdown() {
+  const TOTAL_SECONDS = 15 * 60;
+  let remaining = TOTAL_SECONDS;
+  const modal = document.getElementById('countdownModal');
+  const timerEl = document.getElementById('cdTimer');
+  const barFill = document.getElementById('cdBarFill');
+  const titleEl = document.getElementById('cdTitle');
+  const subEl = document.getElementById('cdSub');
+  const emojiEl = document.getElementById('cdEmoji');
+  const btn = document.getElementById('closeCountdown');
+
+  titleEl.textContent = 'Stay with it';
+  subEl.textContent = "Urges peak and fade on their own. Give it this time — you don't have to do anything else right now.";
+  emojiEl.textContent = '🌊';
+  btn.textContent = "I'll keep this open";
+  barFill.style.width = '100%';
+
+  modal.classList.add('show');
+  requestWakeLock();
+  clearInterval(countdownInterval);
+
+  function tick() {
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+    barFill.style.width = `${(remaining / TOTAL_SECONDS) * 100}%`;
+
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      releaseWakeLock();
+      timerEl.textContent = '00:00';
+      emojiEl.textContent = '🤍';
+      titleEl.textContent = "You made it through";
+      subEl.textContent = "The peak has passed. However you're feeling now, you stayed in control of this moment. That counts.";
+      btn.textContent = 'Close';
+      return;
+    }
+    remaining--;
+  }
+
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+document.getElementById('closeCountdown').onclick = () => {
+  clearInterval(countdownInterval);
+  releaseWakeLock();
+  document.getElementById('countdownModal').classList.remove('show');
+};
+
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    }
+  } catch (e) {
+    // wake lock not available or was denied — countdown still works, screen just may dim
+  }
+}
+function releaseWakeLock() {
+  if (wakeLock) {
+    wakeLock.release().catch(() => {});
+    wakeLock = null;
+  }
+}
+// Re-acquire the wake lock if the tab regains visibility mid-countdown
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && countdownInterval && !wakeLock) {
+    requestWakeLock();
+  }
+});
 
 document.getElementById('openReset').onclick = () => resetModal.classList.add('open');
 document.getElementById('cancelReset').onclick = () => resetModal.classList.remove('open');
