@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Steady — Bet-Free Days</title>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#10202b">
-<link rel="icon" href="/icon-192.png">
-<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <style>
   :root {
     --navy-deep: #10202b;
@@ -941,7 +941,7 @@ loadState();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
   });
 }
 </script>
