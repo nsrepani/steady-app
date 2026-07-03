@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Steady — Bet-Free Days</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#10202b">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<style>
+  :root {
+    --navy-deep: #10202b;
+    --navy: #17303e;
+    --teal: #2c5a56;
+    --sand: #f0ead9;
+    --sand-dim: #cdc6b4;
+    --amber: #d9a441;
+    --coral-muted: #b8654f;
+    --line: rgba(240,234,217,0.12);
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+  }
+
+  @font-face {
+    font-family: 'Fraunces';
+    src: local('Georgia');
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--navy-deep);
+    color: var(--sand);
+    font-family: var(--font-body);
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+
+  body {
+    background-image:
+      radial-gradient(ellipse at 50% -10%, rgba(44,90,86,0.45), transparent 60%),
+      linear-gradient(180deg, var(--navy-deep) 0%, #0c1922 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 40px;
+  }
+
+  .app { width: 100%; max-width: 460px; }
+
+  /* Header */
+  header {
+    padding: 28px 4px 8px;
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 600;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 26px;
+    margin-top: 6px;
+    letter-spacing: 0.01em;
+  }
+
+  /* Ring */
+  .ring-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 28px auto 8px;
+  }
+  svg.ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: rgba(240,234,217,0.08); stroke-width: 10; }
+  .ring-progress {
+    fill: none;
+    stroke: url(#ringGradient);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.6s ease;
+  }
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .day-count {
+    font-family: var(--font-display);
+    font-size: 68px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--sand);
+  }
+  .day-label {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sand-dim);
+    margin-top: 6px;
+  }
+  .next-milestone {
+    font-size: 12px;
+    color: var(--amber);
+    margin-top: 10px;
+    font-weight: 500;
+  }
+
+  /* Since date */
+  .since {
+    text-align: center;
+    font-size: 13px;
+    color: var(--sand-dim);
+    margin-top: 4px;
+  }
+  .since span { color: var(--sand); font-weight: 600; }
+
+  /* Live timer */
+  .live-timer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .lt-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 42px;
+    background: rgba(240,234,217,0.05);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 4px 6px;
+  }
+  .lt-num {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--amber);
+    font-variant-numeric: tabular-nums;
+  }
+  .lt-label {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sand-dim);
+    margin-top: 2px;
+  }
+  .lt-sep {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--sand-dim);
+    padding-bottom: 14px;
+  }
+
+  /* Best streak */
+  .best-streak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(217,164,65,0.1);
+    border: 1px solid rgba(217,164,65,0.25);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .best-icon { font-size: 14px; }
+  .best-text {
+    font-size: 12.5px;
+    color: var(--sand-dim);
+    font-weight: 500;
+  }
+  .best-text #bestDays {
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  /* Milestones */
+  .milestones {
+    margin-top: 32px;
+  }
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sand-dim);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+  .milestone-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .milestone-row::-webkit-scrollbar { display: none; }
+  .badge {
+    flex: 0 0 auto;
+    width: 74px;
+    padding: 14px 8px;
+    border-radius: 14px;
+    background: var(--navy);
+    border: 1px solid var(--line);
+    text-align: center;
+    opacity: 0.5;
+  }
+  .badge.reached {
+    opacity: 1;
+    background: linear-gradient(160deg, rgba(217,164,65,0.18), rgba(44,90,86,0.25));
+    border-color: rgba(217,164,65,0.4);
+  }
+  .badge .num {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--sand-dim);
+  }
+  .badge.reached .num { color: var(--amber); }
+  .badge .unit {
+    font-size: 10px;
+    color: var(--sand-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  /* Quote */
+  .quote-card {
+    margin-top: 28px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: rgba(44,90,86,0.18);
+    border: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--sand);
+    font-style: italic;
+  }
+
+  /* Actions */
+  .actions {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  button {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 15px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  button:active { transform: scale(0.97); }
+
+  .btn-set {
+    background: var(--amber);
+    color: var(--navy-deep);
+  }
+  .btn-reset {
+    background: transparent;
+    color: var(--coral-muted);
+    border: 1px solid rgba(184,101,79,0.4);
+  }
+
+  /* Urge alert */
+  .urge-section {
+    margin-top: 28px;
+  }
+  .btn-urge {
+    width: 100%;
+    background: linear-gradient(135deg, #c0392b, #922b21);
+    color: var(--sand);
+    border: 1px solid rgba(240,234,217,0.15);
+    font-size: 15px;
+    padding: 18px 16px;
+    box-shadow: 0 8px 24px rgba(192,57,43,0.4);
+  }
+
+  .urge-block {
+    text-align: left;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .urge-block h3 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--amber);
+    margin: 18px 0 10px;
+  }
+  .urge-block h3:first-child { margin-top: 0; }
+  .urge-block ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .urge-block li {
+    font-size: 13.5px;
+    color: var(--sand);
+    line-height: 1.5;
+    padding: 8px 0 8px 22px;
+    position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+  .urge-block li:last-child { border-bottom: none; }
+  .urge-block li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 15px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+  .urge-block.consequences li::before {
+    background: var(--coral-muted);
+  }
+  .urge-block .lead {
+    font-size: 13px;
+    color: var(--sand-dim);
+    line-height: 1.55;
+    margin-bottom: 4px;
+  }
+
+  /* History */
+  .history {
+    margin-top: 32px;
+  }
+  .history-empty {
+    font-size: 13px;
+    color: var(--sand-dim);
+    padding: 4px 2px;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .history-item .streak-len { color: var(--sand); font-weight: 600; }
+  .history-item .streak-date { color: var(--sand-dim); }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(8,15,20,0.72);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 10;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--navy);
+    width: 100%;
+    max-width: 460px;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 22px 30px;
+    border-top: 1px solid var(--line);
+  }
+  .modal h2 {
+    font-family: var(--font-display);
+    font-size: 19px;
+    margin-bottom: 6px;
+  }
+  .modal p {
+    font-size: 13px;
+    color: var(--sand-dim);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .modal input[type="date"] {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--navy-deep);
+    color: var(--sand);
+    font-family: var(--font-body);
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-actions button { flex: 1; }
+  .btn-cancel {
+    background: transparent;
+    color: var(--sand-dim);
+    border: 1px solid var(--line);
+  }
+
+  footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--sand-dim);
+    opacity: 0.6;
+    padding: 0 20px;
+    line-height: 1.6;
+  }
+
+  /* Milestone toast */
+  .toast {
+    position: fixed;
+    left: 20px;
+    right: 20px;
+    bottom: -140px;
+    max-width: 420px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #d9a441, #c98a2e);
+    color: var(--navy-deep);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    z-index: 20;
+    transition: bottom 0.5s cubic-bezier(.22,1,.36,1);
+  }
+  .toast.show { bottom: 24px; }
+  .toast-icon { font-size: 26px; }
+  .toast-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .toast-sub {
+    font-size: 12.5px;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+
+  /* Big year celebration */
+  .celebration-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,15,20,0.88);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    padding: 24px;
+  }
+  .celebration-backdrop.show { display: flex; }
+  .celebration-card {
+    background: linear-gradient(160deg, #1c3a3a, #17303e);
+    border: 1px solid rgba(217,164,65,0.4);
+    border-radius: 24px;
+    padding: 40px 28px;
+    text-align: center;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: pop-in 0.5s cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .celebration-emoji { font-size: 40px; margin-bottom: 12px; letter-spacing: 6px; }
+  .celebration-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 34px;
+    color: var(--amber);
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+  }
+  .celebration-sub {
+    font-size: 14.5px;
+    color: var(--sand);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .celebration-card .btn-set { width: 100%; }
+
+  .celebration-card.reflect {
+    border-color: rgba(184,101,79,0.4);
+    background: linear-gradient(160deg, #2a2020, #1c2530);
+  }
+  .celebration-card.reflect .celebration-title.reflect-title {
+    color: var(--coral-muted);
+    font-size: 26px;
+  }
+  .celebration-card.reflect .celebration-sub {
+    text-align: left;
+  }
+  .celebration-card.reflect .btn-set {
+    background: var(--coral-muted);
+    color: var(--sand);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">Steady</div>
+    <h1>Don't Falter. Your Choice</h1>
+  </header>
+
+  <div class="ring-wrap">
+    <svg class="ring" viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#d9a441"/>
+          <stop offset="100%" stop-color="#2c5a56"/>
+        </linearGradient>
+      </defs>
+      <circle class="ring-track" cx="100" cy="100" r="90"/>
+      <circle id="ringProgress" class="ring-progress" cx="100" cy="100" r="90" stroke-dasharray="0 566"/>
+    </svg>
+    <div class="ring-center">
+      <div class="day-count" id="dayCount">0</div>
+      <div class="day-label" id="dayLabel">days</div>
+      <div class="next-milestone" id="nextMilestone"></div>
+    </div>
+  </div>
+
+  <div class="since">Counting since <span id="sinceDate">—</span></div>
+
+  <div class="live-timer" id="liveTimer">
+    <div class="lt-unit"><div class="lt-num" id="ltDays">0</div><div class="lt-label">days</div></div>
+    <div class="lt-sep">:</div>
+    <div class="lt-unit"><div class="lt-num" id="ltHours">00</div><div class="lt-label">hrs</div></div>
+    <div class="lt-sep">:</div>
+    <div class="lt-unit"><div class="lt-num" id="ltMins">00</div><div class="lt-label">min</div></div>
+    <div class="lt-sep">:</div>
+    <div class="lt-unit"><div class="lt-num" id="ltSecs">00</div><div class="lt-label">sec</div></div>
+  </div>
+
+  <div class="best-streak" id="bestStreak">
+    <span class="best-icon">🏆</span>
+    <span class="best-text">Longest streak: <span id="bestDays">0</span> days</span>
+  </div>
+
+  <div class="milestones">
+    <div class="section-label">Milestones</div>
+    <div class="milestone-row" id="milestoneRow"></div>
+  </div>
+
+  <div class="quote-card" id="quoteCard">Every day you count is a day you chose yourself.</div>
+
+  <div class="urge-section">
+    <button class="btn-urge" id="openUrge">⚡ Urge Alert — I'm feeling the pull right now</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn-set" id="openSetDate">Set start date</button>
+    <button class="btn-reset" id="openReset">I slipped — reset counter</button>
+  </div>
+
+  <div class="history">
+    <div class="section-label">Past streaks</div>
+    <div id="historyList"><div class="history-empty">No past streaks yet. This is your first — make it count.</div></div>
+  </div>
+
+  <footer>
+    Your data is stored privately on this device and only visible to you.<br>
+    If gambling is affecting your life, the National Council on Problem Gambling helpline (US) is 1-800-522-4700, available 24/7.
+  </footer>
+</div>
+
+<div class="celebration-backdrop" id="reflection">
+  <div class="celebration-card reflect">
+    <div class="celebration-emoji">🤍</div>
+    <div class="celebration-title reflect-title">Let's pause for a moment</div>
+    <div class="celebration-sub">
+      This is your 5th reset. That's not a failure — it's a pattern worth noticing.
+      Before you place another bet, try one small thing: wait 24 hours, and tell someone
+      you trust how you're feeling right now. Urges fade faster than they feel like they will.
+      <br><br>
+      If it would help to talk to someone, the National Council on Problem Gambling
+      helpline (US) is free and confidential: <strong>1-800-522-4700</strong>.
+    </div>
+    <button class="btn-set" id="closeReflection">I hear you</button>
+  </div>
+</div>
+
+<div class="celebration-backdrop" id="celebration">
+  <div class="celebration-card">
+    <div class="celebration-emoji">🏆🎉🏆</div>
+    <div class="celebration-title">YOU DID IT!!!</div>
+    <div class="celebration-sub">One full year, bet-free. Go treat yourself and family — you've earned it.</div>
+    <button class="btn-set" id="closeCelebration">Thank you</button>
+  </div>
+</div>
+
+<div class="toast" id="milestoneToast">
+  <div class="toast-icon">🎉</div>
+  <div class="toast-text">
+    <div class="toast-title" id="toastTitle">Milestone reached!</div>
+    <div class="toast-sub">Go treat yourself and family</div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="urgeModal">
+  <div class="modal">
+    <h2>Ride this out. It will pass.</h2>
+    <p class="lead" style="margin-bottom:0;">Urges peak and fade, usually within 15–20 minutes, even when they feel unbearable right now. You don't have to act on it to make it stop.</p>
+
+    <div class="urge-block">
+      <h3>Right now, try one of these</h3>
+      <ul>
+        <li>Delay it. Set a timer for 15 minutes and do nothing about the urge until it ends — you can always come back to it after.</li>
+        <li>Get up and move. A brisk walk or even 20 jumping jacks burns off the restless energy driving the urge.</li>
+        <li>Splash cold water on your face or hold a cold drink — it interrupts the spike and gives your body something else to focus on.</li>
+        <li>Breathe in a box: 4 seconds in, 4 hold, 4 out, 4 hold. Repeat 5 times.</li>
+        <li>Call or text someone — don't explain, just talk. Connection short-circuits the urge faster than willpower does.</li>
+        <li>Physically leave the situation: close the app, log out, put your phone in another room.</li>
+        <li>Name 5 things you can see, 4 you can hear, 3 you can touch — it pulls your brain out of autopilot.</li>
+      </ul>
+
+      <h3>If you place this bet anyway</h3>
+      <div class="urge-block consequences" style="padding-right:0;">
+        <ul>
+          <li>Your current streak of <strong id="urgeDayCount">0</strong> days resets to zero, and you start over from today.</li>
+          <li>The relief is short — most people report the dopamine spike is followed by regret within the hour, not lasting satisfaction.</li>
+          <li>Money spent here is money pulled from whatever it was meant for — bills, savings, or the people who count on you.</li>
+          <li>It gets harder to trust yourself next time, and harder for people close to you to trust you too.</li>
+          <li>One bet rarely stays one bet — it tends to open the door to the next, and the next.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:18px;">
+      <button class="btn-cancel" id="closeUrge">Close</button>
+      <button class="btn-set" id="urgeCalledSomeone">I'm okay now</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="setModal">
+  <div class="modal">
+    <h2>Set your start date</h2>
+    <p>This is the day your current streak began. You can back-date it if you've already been bet-free for a while.</p>
+    <input type="date" id="dateInput">
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelSet">Cancel</button>
+      <button class="btn-set" id="confirmSet">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="resetModal">
+  <div class="modal">
+    <h2>Log today and start fresh</h2>
+    <p>A slip doesn't erase the days you already had. That streak will be saved to your history, and a new one starts today.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelReset">Cancel</button>
+      <button class="btn-set" id="confirmReset" style="background:#b8654f;color:#f0ead9;">Confirm reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MILESTONES = [
+  {days: 30, label: '1', unit: 'month'},
+  {days: 60, label: '2', unit: 'months'},
+  {days: 90, label: '3', unit: 'months'},
+  {days: 120, label: '4', unit: 'months'},
+  {days: 150, label: '5', unit: 'months'},
+  {days: 180, label: '6', unit: 'months'},
+  {days: 210, label: '7', unit: 'months'},
+  {days: 240, label: '8', unit: 'months'},
+  {days: 270, label: '9', unit: 'months'},
+  {days: 300, label: '10', unit: 'months'},
+  {days: 330, label: '11', unit: 'months'},
+  {days: 365, label: '1', unit: 'year'},
+];
+
+const QUOTES = [
+  "The house always wins in the end. Walking away is the only real win.",
+  "A bet is a bill for a feeling that never gets paid off.",
+  "Every day you don't gamble is money, trust, and time you keep.",
+  "The urge to chase a loss is the addiction talking, not logic.",
+  "You're not missing out by not betting. You're opting out of losing.",
+  "No win ever felt as good as staying in control feels tomorrow.",
+  "Gambling sells hope by the minute and takes far more than it gives.",
+  "The best hand you can play today is the one where you don't sit at the table.",
+  "The odds are built to take from you slowly. Quitting is the only guaranteed payout.",
+  "A near miss isn't a sign to keep going. It's the game convincing you to lose more.",
+  "The next spin doesn't owe you anything. It never did.",
+  "What you don't stake today, you still have tomorrow.",
+  "Every bet placed is a future you're borrowing against.",
+  "The casino was built on people who believed 'just one more' would fix it.",
+  "Discipline today is cheaper than regret tomorrow.",
+  "You can't out-bet a system designed to outlast you.",
+  "A streak of losses isn't bad luck waiting to turn. It's the math working as designed.",
+  "Staying out of the game is the only move where you can't lose.",
+  "Your worth was never tied to a payout. It doesn't start now.",
+  "The rush fades in minutes. The damage doesn't.",
+  "Nobody ever gambled their way back to who they were before they started.",
+  "The safest bet is the one you never place.",
+  "Today's win doesn't cancel yesterday's loss. It just delays the reckoning.",
+  "Boredom is not a reason to bet. It's a reason to call someone.",
+  "The app, the site, the table — they're all designed to make 'enough' impossible.",
+  "You are allowed to walk away with nothing on the table and still be winning.",
+  "Every day counted here is a day the odds didn't get to test you.",
+  "Chasing losses is a trapdoor dressed up as a comeback.",
+  "The version of you a year from now is built by what you don't do today.",
+  "Quiet, boring, bet-free days are the ones that actually add up to something.",
+];
+
+let state = { startDate: null, history: [] };
+
+function daysBetween(a, b) {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const d1 = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const d2 = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.round((d2 - d1) / msPerDay);
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+async function loadState() {
+  try {
+    const res = await window.storage.get('bet-free-state', false);
+    if (res && res.value) {
+      state = JSON.parse(res.value);
+    }
+  } catch (e) {
+    // no existing state yet
+  }
+  if (!state.startDate) {
+    state.startDate = new Date().toISOString();
+    await saveState();
+  }
+  if (!state.history) state.history = [];
+  if (!state.notifiedMilestones) state.notifiedMilestones = [];
+  if (!state.resetCount) state.resetCount = 0;
+  render();
+}
+
+async function saveState() {
+  try {
+    await window.storage.set('bet-free-state', JSON.stringify(state), false);
+  } catch (e) {
+    console.error('Could not save', e);
+  }
+}
+
+function render() {
+  const start = new Date(state.startDate);
+  const today = new Date();
+  const days = Math.max(0, daysBetween(start, today));
+
+  document.getElementById('dayCount').textContent = days;
+  document.getElementById('dayLabel').textContent = days === 1 ? 'day' : 'days';
+  document.getElementById('sinceDate').textContent = formatDate(start);
+  updateLiveTimer();
+
+  // longest streak = best of all past streaks and the current one
+  const bestPast = state.history.reduce((max, h) => Math.max(max, h.length), 0);
+  const best = Math.max(bestPast, days);
+  const bestBadge = document.getElementById('bestStreak');
+  if (days >= best && days > 0) {
+    bestBadge.querySelector('.best-text').innerHTML = `Longest streak: <span id="bestDays">${best}</span> days — that's now!`;
+  } else {
+    bestBadge.querySelector('.best-text').innerHTML = `Longest streak: <span id="bestDays">${best}</span> days`;
+  }
+
+  // ring progress: fill toward next milestone
+  const next = MILESTONES.find(m => m.days > days) || MILESTONES[MILESTONES.length - 1];
+  const prevIdx = MILESTONES.findIndex(m => m.days === next.days) - 1;
+  const prevDays = prevIdx >= 0 ? MILESTONES[prevIdx].days : 0;
+  const span = Math.max(1, next.days - prevDays);
+  const progressInSpan = Math.min(1, (days - prevDays) / span);
+  const circumference = 2 * Math.PI * 90;
+  const filled = circumference * progressInSpan;
+  document.getElementById('ringProgress').setAttribute('stroke-dasharray', `${filled} ${circumference}`);
+
+  const remaining = next.days - days;
+  document.getElementById('nextMilestone').textContent =
+    remaining > 0 ? `${remaining} day${remaining === 1 ? '' : 's'} to ${next.label} ${next.unit}` : 'All milestones reached';
+
+  // milestone badges
+  const row = document.getElementById('milestoneRow');
+  row.innerHTML = '';
+  MILESTONES.forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'badge' + (days >= m.days ? ' reached' : '');
+    el.innerHTML = `<div class="num">${m.label}</div><div class="unit">${m.unit}</div>`;
+    row.appendChild(el);
+  });
+
+  checkMilestones(days);
+
+  // quote — stable per day
+  const qIdx = days % QUOTES.length;
+  document.getElementById('quoteCard').textContent = QUOTES[qIdx];
+
+  // history
+  const histEl = document.getElementById('historyList');
+  if (!state.history.length) {
+    histEl.innerHTML = '<div class="history-empty">No past streaks yet. This is your first — make it count.</div>';
+  } else {
+    histEl.innerHTML = '';
+    [...state.history].reverse().forEach(h => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `<span class="streak-date">${formatDate(new Date(h.start))} – ${formatDate(new Date(h.end))}</span><span class="streak-len">${h.length} day${h.length === 1 ? '' : 's'}</span>`;
+      histEl.appendChild(item);
+    });
+  }
+}
+
+function checkMilestones(days) {
+  const reached = MILESTONES.find(m => days === m.days);
+  if (reached && !state.notifiedMilestones.includes(reached.days)) {
+    state.notifiedMilestones.push(reached.days);
+    saveState();
+    if (reached.days === 365) {
+      showCelebration();
+    } else {
+      const label = `${reached.label} ${reached.unit}, bet-free!`;
+      showToast(label);
+    }
+  }
+}
+
+function showCelebration() {
+  document.getElementById('celebration').classList.add('show');
+}
+
+let toastTimer = null;
+function showToast(title) {
+  const toast = document.getElementById('milestoneToast');
+  document.getElementById('toastTitle').textContent = title;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
+document.getElementById('closeCelebration').onclick = () => {
+  document.getElementById('celebration').classList.remove('show');
+};
+
+// Modal wiring
+const setModal = document.getElementById('setModal');
+const resetModal = document.getElementById('resetModal');
+
+document.getElementById('openSetDate').onclick = () => {
+  document.getElementById('dateInput').value = new Date(state.startDate).toISOString().slice(0,10);
+  setModal.classList.add('open');
+};
+document.getElementById('cancelSet').onclick = () => setModal.classList.remove('open');
+document.getElementById('confirmSet').onclick = async () => {
+  const val = document.getElementById('dateInput').value;
+  if (val) {
+    state.startDate = new Date(val + 'T00:00:00').toISOString();
+    await saveState();
+    render();
+  }
+  setModal.classList.remove('open');
+};
+
+const urgeModal = document.getElementById('urgeModal');
+document.getElementById('openUrge').onclick = () => {
+  const start = new Date(state.startDate);
+  const today = new Date();
+  document.getElementById('urgeDayCount').textContent = Math.max(0, daysBetween(start, today));
+  urgeModal.classList.add('open');
+};
+document.getElementById('closeUrge').onclick = () => urgeModal.classList.remove('open');
+document.getElementById('urgeCalledSomeone').onclick = () => urgeModal.classList.remove('open');
+
+document.getElementById('openReset').onclick = () => resetModal.classList.add('open');
+document.getElementById('cancelReset').onclick = () => resetModal.classList.remove('open');
+document.getElementById('confirmReset').onclick = async () => {
+  const start = new Date(state.startDate);
+  const today = new Date();
+  const length = Math.max(0, daysBetween(start, today));
+  state.history.push({ start: state.startDate, end: today.toISOString(), length });
+  state.startDate = today.toISOString();
+  state.notifiedMilestones = [];
+  state.resetCount = (state.resetCount || 0) + 1;
+  await saveState();
+  render();
+  resetModal.classList.remove('open');
+  if (state.resetCount % 5 === 0) {
+    document.getElementById('reflection').classList.add('show');
+  }
+};
+
+document.getElementById('closeReflection').onclick = () => {
+  document.getElementById('reflection').classList.remove('show');
+};
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function updateLiveTimer() {
+  if (!state.startDate) return;
+  const start = new Date(state.startDate).getTime();
+  const now = Date.now();
+  let diff = Math.max(0, now - start);
+
+  const day = Math.floor(diff / 86400000);
+  diff -= day * 86400000;
+  const hrs = Math.floor(diff / 3600000);
+  diff -= hrs * 3600000;
+  const mins = Math.floor(diff / 60000);
+  diff -= mins * 60000;
+  const secs = Math.floor(diff / 1000);
+
+  document.getElementById('ltDays').textContent = day;
+  document.getElementById('ltHours').textContent = pad(hrs);
+  document.getElementById('ltMins').textContent = pad(mins);
+  document.getElementById('ltSecs').textContent = pad(secs);
+}
+
+setInterval(updateLiveTimer, 1000);
+
+loadState();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
