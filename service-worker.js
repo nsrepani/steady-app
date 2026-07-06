@@ -1,4 +1,4 @@
-const CACHE_NAME = 'steady-v2';
+const CACHE_NAME = 'steady-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -24,6 +24,23 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Always try the network first for page navigations, so updates show up
+  // immediately. Fall back to cache only when offline.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // For other assets (icons, manifest), cache-first is fine since they
+  // rarely change and this keeps things fast.
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
