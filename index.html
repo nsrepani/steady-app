@@ -166,19 +166,24 @@
   }
 
   /* Best streak */
+  .stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
   .best-streak {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 14px;
     padding: 10px 16px;
     border-radius: 999px;
     background: rgba(217,164,65,0.1);
     border: 1px solid rgba(217,164,65,0.25);
     width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
   }
   .best-icon { font-size: 14px; }
   .best-text {
@@ -188,6 +193,28 @@
   }
   .best-text #bestDays {
     color: var(--amber);
+    font-weight: 700;
+  }
+
+  .relapse-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(184,101,79,0.1);
+    border: 1px solid rgba(184,101,79,0.25);
+    width: fit-content;
+  }
+  .relapse-icon { font-size: 14px; color: var(--coral-muted); }
+  .relapse-text {
+    font-size: 12.5px;
+    color: var(--sand-dim);
+    font-weight: 500;
+  }
+  .relapse-text #relapseCount {
+    color: var(--coral-muted);
     font-weight: 700;
   }
 
@@ -603,9 +630,15 @@
     <div class="lt-unit"><div class="lt-num" id="ltSecs">00</div><div class="lt-label">sec</div></div>
   </div>
 
-  <div class="best-streak" id="bestStreak">
-    <span class="best-icon">🏆</span>
-    <span class="best-text">Longest streak: <span id="bestDays">0</span> days</span>
+  <div class="stats-row">
+    <div class="best-streak" id="bestStreak">
+      <span class="best-icon">🏆</span>
+      <span class="best-text">Longest streak: <span id="bestDays">0</span> days</span>
+    </div>
+    <div class="relapse-badge" id="relapseBadge">
+      <span class="relapse-icon">↺</span>
+      <span class="relapse-text">Relapses: <span id="relapseCount">0</span></span>
+    </div>
   </div>
 
   <div class="milestones">
@@ -856,6 +889,9 @@ function render() {
   } else {
     bestBadge.querySelector('.best-text').innerHTML = `Longest streak: <span id="bestDays">${best}</span> days`;
   }
+
+  // relapse count = number of logged past streaks
+  document.getElementById('relapseCount').textContent = state.history.length;
 
   // ring progress: fill toward next milestone
   const next = MILESTONES.find(m => m.days > days) || MILESTONES[MILESTONES.length - 1];
