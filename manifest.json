@@ -1,25 +1,31 @@
 {
-  "name": "Savings & Loan Tracker",
-  "short_name": "Savings Tracker",
-  "description": "Track your Philippine bank savings and loan payments with milestones and countdowns.",
+  "name": "Steady — Bet-Free Days",
+  "short_name": "Steady",
+  "description": "Track your bet-free streak, milestones, and urges to gamble.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#FBE2DE",
-  "theme_color": "#16262A",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
+  "background_color": "#10202b",
+  "theme_color": "#10202b",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
