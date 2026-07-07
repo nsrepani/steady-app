@@ -2,1170 +2,1721 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Steady — Bet-Free Days</title>
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#10202b">
-<link rel="icon" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Savings Tracker</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16262A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Savings Tracker">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy-deep: #10202b;
-    --navy: #17303e;
-    --teal: #2c5a56;
-    --sand: #f0ead9;
-    --sand-dim: #cdc6b4;
-    --amber: #d9a441;
-    --coral-muted: #b8654f;
-    --line: rgba(240,234,217,0.12);
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-body: 'Inter', -apple-system, sans-serif;
+  :root{
+    --ink: #16262A;
+    --ink-light: #1F3A3F;
+    --paper: #F6F1E4;
+    --paper-dim: #FBE2DE;
+    --teal: #1F6F5C;
+    --teal-dark: #14493D;
+    --gold: #C9A227;
+    --clay: #B24B32;
+    --clay-dark: #7E351F;
+    --text-dark: #2B2B28;
+    --text-mute: #6B6558;
   }
-
-  @font-face {
-    font-family: 'Fraunces';
-    src: local('Georgia');
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    height: 100%;
-    background: var(--navy-deep);
-    color: var(--sand);
-    font-family: var(--font-body);
-    -webkit-tap-highlight-color: transparent;
-    overscroll-behavior: none;
-  }
-
-  body {
-    background-image:
-      radial-gradient(ellipse at 50% -10%, rgba(44,90,86,0.45), transparent 60%),
-      linear-gradient(180deg, var(--navy-deep) 0%, #0c1922 100%);
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--paper-dim);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 20px 40px;
   }
-
-  .app { width: 100%; max-width: 460px; }
-
-  /* Header */
-  header {
-    padding: 28px 4px 8px;
+  .wrap{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 0 4rem;
+  }
+  .vault{
+    background: var(--ink);
+    padding: 3rem 1.5rem 2.5rem;
     text-align: center;
-  }
-  .eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--amber);
-    font-weight: 600;
-  }
-  h1 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 26px;
-    margin-top: 6px;
-    letter-spacing: 0.01em;
-  }
-
-  /* Ring */
-  .ring-wrap {
     position: relative;
-    width: 280px;
-    height: 280px;
-    margin: 28px auto 8px;
+    border-bottom: 4px solid var(--gold);
   }
-  svg.ring { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .ring-track { fill: none; stroke: rgba(240,234,217,0.08); stroke-width: 10; }
-  .ring-progress {
-    fill: none;
-    stroke: url(#ringGradient);
-    stroke-width: 10;
-    stroke-linecap: round;
-    transition: stroke-dasharray 0.6s ease;
-  }
-  .ring-center {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  .day-count {
-    font-family: var(--font-display);
-    font-size: 68px;
-    font-weight: 600;
-    line-height: 1;
-    color: var(--sand);
-  }
-  .day-label {
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--sand-dim);
-    margin-top: 6px;
-  }
-  .next-milestone {
+  .vault-label{
+    font-family: 'Inter', sans-serif;
     font-size: 12px;
-    color: var(--amber);
-    margin-top: 10px;
-    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8FA69E;
+    margin: 0 0 10px;
   }
-
-  /* Since date */
-  .since {
-    text-align: center;
-    font-size: 13px;
-    color: var(--sand-dim);
-    margin-top: 4px;
-  }
-  .since span { color: var(--sand); font-weight: 600; }
-
-  /* Live timer */
-  .live-timer {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 16px;
-  }
-  .lt-unit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 42px;
-    background: rgba(240,234,217,0.05);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 8px 4px 6px;
-  }
-  .lt-num {
-    font-family: var(--font-display);
-    font-size: 19px;
-    font-weight: 600;
-    color: var(--amber);
+  .vault-total{
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(40px, 9vw, 64px);
+    color: var(--paper);
+    margin: 0;
+    letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
   }
-  .lt-label {
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--sand-dim);
-    margin-top: 2px;
+  .vault-sub{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #6C8B82;
+    margin: 12px 0 0;
   }
-  .lt-sep {
-    font-family: var(--font-display);
-    font-size: 18px;
-    color: var(--sand-dim);
-    padding-bottom: 14px;
+  .stitch{
+    position: absolute;
+    left: 0; right: 0; bottom: -4px;
+    height: 1px;
+    background-image: repeating-linear-gradient(90deg, var(--gold) 0 8px, transparent 8px 16px);
+    opacity: 0.6;
   }
-
-  /* Best streak */
-  .stats-row {
+  .loan-vault{ border-bottom-color: var(--clay); }
+  .loan-vault .stitch{
+    background-image: repeating-linear-gradient(90deg, var(--clay) 0 8px, transparent 8px 16px);
+  }
+  .milestones{
     display: flex;
-    align-items: center;
+    gap: 6px;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
     margin-top: 14px;
   }
-  .best-streak {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 999px;
-    background: rgba(217,164,65,0.1);
-    border: 1px solid rgba(217,164,65,0.25);
-    width: fit-content;
-  }
-  .best-icon { font-size: 14px; }
-  .best-text {
-    font-size: 12.5px;
-    color: var(--sand-dim);
-    font-weight: 500;
-  }
-  .best-text #bestDays {
-    color: var(--amber);
-    font-weight: 700;
-  }
-
-  .relapse-badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 999px;
-    background: rgba(184,101,79,0.1);
-    border: 1px solid rgba(184,101,79,0.25);
-    width: fit-content;
-  }
-  .relapse-icon { font-size: 14px; color: var(--coral-muted); }
-  .relapse-text {
-    font-size: 12.5px;
-    color: var(--sand-dim);
-    font-weight: 500;
-  }
-  .relapse-text #relapseCount {
-    color: var(--coral-muted);
-    font-weight: 700;
-  }
-
-  /* Milestones */
-  .milestones {
-    margin-top: 32px;
-  }
-  .section-label {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--sand-dim);
-    margin-bottom: 12px;
-    padding-left: 2px;
-  }
-  .milestone-row {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-  .milestone-row::-webkit-scrollbar { display: none; }
-  .badge {
-    flex: 0 0 auto;
-    width: 74px;
-    padding: 14px 8px;
-    border-radius: 14px;
-    background: var(--navy);
-    border: 1px solid var(--line);
-    text-align: center;
-    opacity: 0.5;
-  }
-  .badge.reached {
-    opacity: 1;
-    background: linear-gradient(160deg, rgba(217,164,65,0.18), rgba(44,90,86,0.25));
-    border-color: rgba(217,164,65,0.4);
-  }
-  .badge .num {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--sand-dim);
-  }
-  .badge.reached .num { color: var(--amber); }
-  .badge .unit {
-    font-size: 10px;
-    color: var(--sand-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 2px;
-  }
-
-  /* Quote */
-  .quote-card {
-    margin-top: 28px;
-    padding: 18px 20px;
-    border-radius: 16px;
-    background: rgba(44,90,86,0.18);
-    border: 1px solid var(--line);
-    font-family: var(--font-display);
-    font-size: 15px;
-    line-height: 1.5;
-    color: var(--sand);
-    font-style: italic;
-  }
-
-  /* Actions */
-  .actions {
-    margin-top: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  button {
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 600;
-    padding: 15px;
-    border-radius: 14px;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-  }
-  button:active { transform: scale(0.97); }
-
-  .btn-set {
-    background: var(--amber);
-    color: var(--navy-deep);
-  }
-  .btn-reset {
-    background: transparent;
-    color: var(--coral-muted);
-    border: 1px solid rgba(184,101,79,0.4);
-  }
-
-  /* Urge alert */
-  .urge-section {
-    margin-top: 28px;
-  }
-  .btn-urge {
-    width: 100%;
-    background: linear-gradient(135deg, #c0392b, #922b21);
-    color: var(--sand);
-    border: 1px solid rgba(240,234,217,0.15);
-    font-size: 15px;
-    padding: 18px 16px;
-    box-shadow: 0 8px 24px rgba(192,57,43,0.4);
-  }
-
-  .urge-block {
-    text-align: left;
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 2px;
-  }
-  .urge-block h3 {
-    font-family: var(--font-display);
-    font-size: 15px;
-    color: var(--amber);
-    margin: 18px 0 10px;
-  }
-  .urge-block h3:first-child { margin-top: 0; }
-  .urge-block ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .urge-block li {
-    font-size: 13.5px;
-    color: var(--sand);
-    line-height: 1.5;
-    padding: 8px 0 8px 22px;
-    position: relative;
-    border-bottom: 1px solid var(--line);
-  }
-  .urge-block li:last-child { border-bottom: none; }
-  .urge-block li::before {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 15px;
-    width: 6px;
-    height: 6px;
+  .milestone-dot{
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: var(--teal);
+    background: rgba(255,255,255,0.22);
   }
-  .urge-block.consequences li::before {
-    background: var(--coral-muted);
+  .milestone-dot.achieved{
+    background: var(--gold);
   }
-  .urge-block .lead {
+  .milestone-label{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #B8B2A3;
+    margin: 8px 0 0;
+  }
+  .card.milestone-gold{
+    box-shadow: 0 0 0 2px var(--gold), 0 0 14px rgba(201,162,39,0.35);
+  }
+  .loan-finished-note{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--card-accent, #1F5C29);
+    background: rgba(255,255,255,0.5);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin: 0 0 12px;
+    line-height: 1.4;
+  }
+  .goal-progress-text{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text-mute);
+    margin: 0 0 10px;
+  }
+  .goal-reached-note{
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
-    color: var(--sand-dim);
-    line-height: 1.55;
-    margin-bottom: 4px;
+    font-weight: 700;
+    color: var(--card-accent, #1F5C29);
+    background: rgba(255,255,255,0.5);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin: 0 0 12px;
+    line-height: 1.4;
   }
-
-  /* History */
-  .history {
-    margin-top: 32px;
-  }
-  .history-empty {
-    font-size: 13px;
-    color: var(--sand-dim);
-    padding: 4px 2px;
-  }
-  .history-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 4px;
-    border-bottom: 1px solid var(--line);
-    font-size: 13px;
-  }
-  .history-item .streak-len { color: var(--sand); font-weight: 600; }
-  .history-item .streak-date { color: var(--sand-dim); }
-
-  /* Modal */
-  .modal-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(8,15,20,0.72);
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 10;
-  }
-  .modal-backdrop.open { display: flex; }
-  .modal {
-    background: var(--navy);
-    width: 100%;
-    max-width: 460px;
-    border-radius: 20px 20px 0 0;
-    padding: 24px 22px 30px;
-    border-top: 1px solid var(--line);
-  }
-  .modal h2 {
-    font-family: var(--font-display);
-    font-size: 19px;
-    margin-bottom: 6px;
-  }
-  .modal p {
-    font-size: 13px;
-    color: var(--sand-dim);
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  .modal input[type="date"] {
-    width: 100%;
-    padding: 13px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: var(--navy-deep);
-    color: var(--sand);
-    font-family: var(--font-body);
-    font-size: 15px;
-    margin-bottom: 16px;
-  }
-  .modal-actions { display: flex; gap: 10px; }
-  .modal-actions button { flex: 1; }
-  .btn-cancel {
-    background: transparent;
-    color: var(--sand-dim);
-    border: 1px solid var(--line);
-  }
-
-  /* Backup / restore */
-  .backup-section {
-    margin-top: 32px;
-  }
-  .backup-hint {
-    font-size: 12.5px;
-    color: var(--sand-dim);
-    line-height: 1.5;
+  .calc-display{
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: right;
+    padding: 16px 14px;
+    border-radius: 6px;
     margin-bottom: 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
-  .backup-actions {
+  .calc-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .calc-btn{
+    padding: 14px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--text-mute);
+    background: transparent;
+    color: var(--text-dark);
+    cursor: pointer;
+  }
+  .calc-btn:hover{ background: rgba(0,0,0,0.05); }
+  .calc-btn.op{
+    border-color: var(--teal);
+    color: var(--teal-dark);
+  }
+  .calc-btn.op:hover{ background: rgba(31,111,92,0.1); }
+  .calc-btn.clear{
+    border-color: var(--clay);
+    color: var(--clay-dark);
+  }
+  .calc-btn.clear:hover{ background: rgba(178,75,50,0.08); }
+  .calc-btn.equals{
+    background: var(--teal);
+    border-color: var(--teal);
+    color: var(--paper);
+  }
+  .calc-btn.equals:hover{ background: var(--teal-dark); }
+  .global-toggle-bar{
     display: flex;
+    justify-content: center;
     gap: 10px;
+    padding: 14px 1.5rem 0;
+    flex-wrap: wrap;
   }
-  .backup-actions button {
-    flex: 1;
-    font-size: 13.5px;
-    padding: 12px;
-  }
-
-  footer {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 11px;
-    color: var(--sand-dim);
-    opacity: 0.6;
-    padding: 0 20px;
-    line-height: 1.6;
-  }
-
-  /* Milestone toast */
-  .toast {
-    position: fixed;
-    left: 20px;
-    right: 20px;
-    bottom: -140px;
-    max-width: 420px;
-    margin: 0 auto;
-    background: linear-gradient(135deg, #d9a441, #c98a2e);
-    color: var(--navy-deep);
-    border-radius: 16px;
-    padding: 16px 18px;
+  .hide-toggle-btn{
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-    z-index: 20;
-    transition: bottom 0.5s cubic-bezier(.22,1,.36,1);
-  }
-  .toast.show { bottom: 24px; }
-  .toast-icon { font-size: 26px; }
-  .toast-title {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 15px;
-  }
-  .toast-sub {
-    font-size: 12.5px;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--text-mute);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
     font-weight: 500;
-    opacity: 0.85;
-    margin-top: 2px;
+    color: var(--text-mute);
+    cursor: pointer;
   }
-
-  /* Big year celebration */
-  .celebration-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(8,15,20,0.88);
-    display: none;
+  .hide-toggle-btn:hover{ border-color: var(--teal); color: var(--teal-dark); }
+  .hide-toggle-btn.active{
+    border-color: var(--gold);
+    color: var(--text-dark);
+    background: rgba(201,162,39,0.1);
+  }
+  .hide-toggle-btn svg{ display: block; }
+  .eye-btn{
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    color: var(--text-mute);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .eye-btn:hover{ color: var(--card-accent, var(--teal-dark)); }
+  .eye-btn svg{ display: block; }
+  .ledger{
+    padding: 1.75rem 1.5rem 0;
+  }
+  .ledger-heading{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+    margin: 0 0 1rem;
+  }
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .card{
+    background: var(--paper);
+    border-radius: 4px;
+    border-left: 3px dashed var(--teal);
+    padding: 1.1rem 1.25rem;
+    position: relative;
+  }
+  .card .acct-name{ color: var(--card-accent, var(--teal-dark)); }
+  .card .ctrl-btn{ border-color: var(--card-accent, var(--teal)); color: var(--card-accent, var(--teal-dark)); }
+  .card .ctrl-btn.minus{ border-color: var(--card-accent, var(--clay)); color: var(--card-accent, var(--clay-dark)); }
+  .card .ctrl-btn:hover{ background: var(--card-hover, rgba(31,111,92,0.1)); }
+  .card-top{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .logo-wrap{
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 30;
-    padding: 24px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.06);
   }
-  .celebration-backdrop.show { display: flex; }
-  .celebration-card {
-    background: linear-gradient(160deg, #1c3a3a, #17303e);
-    border: 1px solid rgba(217,164,65,0.4);
-    border-radius: 24px;
-    padding: 40px 28px;
-    text-align: center;
-    max-width: 380px;
+  .bank-logo{
     width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    animation: pop-in 0.5s cubic-bezier(.22,1,.36,1);
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
   }
-  @keyframes pop-in {
-    0% { transform: scale(0.85); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+  .bank-fallback{
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--card-accent, var(--teal-dark));
   }
-  .celebration-emoji { font-size: 40px; margin-bottom: 12px; letter-spacing: 6px; }
-  .celebration-title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 34px;
-    color: var(--amber);
-    margin-bottom: 14px;
-    letter-spacing: 0.01em;
+  .name-field{
+    flex: 1;
+    min-width: 0;
   }
-  .celebration-sub {
-    font-size: 14.5px;
-    color: var(--sand);
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-  .celebration-card .btn-set { width: 100%; }
-
-  .celebration-card.reflect {
-    border-color: rgba(184,101,79,0.4);
-    background: linear-gradient(160deg, #2a2020, #1c2530);
-  }
-  .celebration-card.reflect .celebration-title.reflect-title {
-    color: var(--coral-muted);
-    font-size: 26px;
-  }
-  .celebration-card.reflect .celebration-sub {
-    text-align: left;
-  }
-  .celebration-card.reflect .btn-set {
-    background: var(--coral-muted);
-    color: var(--sand);
-  }
-
-  /* Countdown */
-  .countdown-card {
-    background: linear-gradient(160deg, #1a3535, #14282f);
-    border-color: rgba(44,90,86,0.5);
-  }
-  .countdown-title { color: var(--sand); font-size: 24px; }
-  .countdown-timer {
-    font-family: var(--font-display);
-    font-size: 56px;
+  .acct-name{
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
-    color: var(--amber);
-    margin: 18px 0 14px;
-    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+    color: var(--teal-dark);
+    border: none;
+    background: transparent;
+    padding: 2px 0;
+    width: 100%;
+    border-bottom: 1px solid transparent;
+    cursor: text;
+  }
+  .acct-name:hover{ border-bottom: 1px solid var(--teal); }
+  .acct-name:focus{
+    outline: none;
+    border-bottom: 1px solid var(--gold);
+  }
+  .acct-number{
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--text-mute);
+    border: none;
+    background: transparent;
+    padding: 1px 0;
+    width: 100%;
+    border-bottom: 1px solid transparent;
+    cursor: text;
     letter-spacing: 0.02em;
   }
-  .countdown-bar-track {
-    width: 100%;
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(240,234,217,0.1);
-    overflow: hidden;
-    margin-bottom: 24px;
+  .acct-number:hover{ border-bottom: 1px solid var(--text-mute); }
+  .acct-number:focus{
+    outline: none;
+    border-bottom: 1px solid var(--gold);
   }
-  .countdown-bar-fill {
-    height: 100%;
+  .acct-number::placeholder{ color: var(--text-mute); opacity: 0.6; }
+  .del-btn{
+    background: none;
+    border: none;
+    color: var(--text-mute);
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+    flex-shrink: 0;
+  }
+  .del-btn:hover{ color: var(--clay); }
+  .acct-balance{
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    margin: 10px 0 14px;
+    color: var(--text-dark);
+    font-variant-numeric: tabular-nums;
+  }
+  .controls{
+    display: flex;
+    gap: 8px;
+  }
+  .ctrl-btn{
+    flex: 1;
+    border: 1px solid var(--teal);
+    background: transparent;
+    color: var(--teal-dark);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 3px;
+    padding: 6px 0;
+    cursor: pointer;
+    transition: background 0.12s ease;
+  }
+  .ctrl-btn:hover{ background: rgba(31,111,92,0.1); }
+  .ctrl-btn.minus{
+    border-color: var(--clay);
+    color: var(--clay-dark);
+  }
+  .ctrl-btn.minus:hover{ background: rgba(178,75,50,0.08); }
+  .editor{
+    display: none;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .editor input{
+    flex: 1;
+    min-width: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 6px 8px;
+    border: 1px solid var(--text-mute);
+    border-radius: 3px;
+    background: white;
+    color: var(--text-dark);
+  }
+  .editor input:focus{ outline: none; border-color: var(--gold); }
+  .editor button{
+    width: 34px;
+    flex-shrink: 0;
+    border: 1px solid var(--text-mute);
+    background: var(--paper);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .history-link{
+    display: block;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--card-accent, var(--teal-dark));
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: left;
+  }
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(22,38,42,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .modal-overlay.open{ display: flex; }
+  .modal-box{
+    background: var(--paper);
+    border-radius: 8px;
     width: 100%;
-    background: linear-gradient(90deg, #2c5a56, #d9a441);
-    transition: width 1s linear;
+    max-width: 380px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+  .modal-head h3{
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-dark);
+  }
+  .modal-close{
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-mute);
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+  }
+  .modal-close:hover{ color: var(--clay); }
+  .modal-body{
+    padding: 0.5rem 1.25rem 1.25rem;
+    overflow-y: auto;
+  }
+  .history-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .history-row:last-child{ border-bottom: none; }
+  .history-date{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text-mute);
+  }
+  .history-amounts{
+    text-align: right;
+  }
+  .history-delta{
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .history-delta.pos{ color: var(--teal-dark); }
+  .history-delta.neg{ color: var(--clay-dark); }
+  .history-balance{
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--text-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .history-empty{
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text-mute);
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+  .loan-name{
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--card-accent, var(--teal-dark));
+    margin: 0;
+    padding-right: 20px;
+    word-break: break-word;
+  }
+  .loan-meta{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text-mute);
+    margin: 6px 0 10px;
+  }
+  .loan-countdown{
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0 0 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .pay-btn{
+    width: 100%;
+    border: 1px solid var(--teal);
+    background: transparent;
+    color: var(--teal-dark);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 8px 0;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+  .pay-btn:hover{ background: rgba(31,111,92,0.1); }
+  .pay-btn:disabled{
+    opacity: 0.55;
+    cursor: not-allowed;
+    border-color: var(--text-mute);
+    color: var(--text-mute);
+    background: transparent;
+  }
+  .loan-form-box{
+    background: var(--paper);
+    border: 1px dashed var(--text-mute);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .loan-form-box.open{ display: flex; }
+  .loan-form-box input{
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid var(--text-mute);
+    border-radius: 4px;
+    background: white;
+    color: var(--text-dark);
+    width: 100%;
+  }
+  .loan-form-box input:focus{ outline: none; border-color: var(--gold); }
+  .loan-form-actions{
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .loan-form-actions button{
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #loan-form-save{
+    border: 1px solid var(--teal);
+    background: var(--teal);
+    color: var(--paper);
+  }
+  #loan-form-cancel{
+    border: 1px solid var(--text-mute);
+    background: transparent;
+    color: var(--text-mute);
+  }
+  .history-filters{
+    display: flex;
+    gap: 6px;
+    padding: 0.75rem 1.25rem 0;
+    flex-wrap: wrap;
+  }
+  .filter-btn{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--text-mute);
+    background: transparent;
+    color: var(--text-mute);
+    cursor: pointer;
+  }
+  .filter-btn.active{
+    border-color: var(--teal);
+    background: var(--teal);
+    color: var(--paper);
+  }
+  .add-account{
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px dashed var(--text-mute);
+    background: transparent;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-mute);
+    cursor: pointer;
+  }
+  .add-account:hover{ border-color: var(--teal); color: var(--teal-dark); }
+  .backup-row{
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .backup-btn{
+    flex: 1;
+    text-align: center;
+    padding: 14px;
+    border: 2px solid var(--teal);
+    border-radius: 6px;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    cursor: pointer;
+  }
+  .backup-btn:hover{ background: rgba(31,111,92,0.1); }
+  .stamp{
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-top: 0.75rem;
   }
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="eyebrow">Steady</div>
-    <h1>Don't Falter. Your Choice</h1>
-  </header>
 
-  <div class="ring-wrap">
-    <svg class="ring" viewBox="0 0 200 200">
-      <defs>
-        <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#d9a441"/>
-          <stop offset="100%" stop-color="#2c5a56"/>
-        </linearGradient>
-      </defs>
-      <circle class="ring-track" cx="100" cy="100" r="90"/>
-      <circle id="ringProgress" class="ring-progress" cx="100" cy="100" r="90" stroke-dasharray="0 566"/>
-    </svg>
-    <div class="ring-center">
-      <div class="day-count" id="dayCount">0</div>
-      <div class="day-label" id="dayLabel">days</div>
-      <div class="next-milestone" id="nextMilestone"></div>
+<div class="wrap">
+  <div class="global-toggle-bar">
+    <button class="hide-toggle-btn" id="hide-savings-total-btn">
+      <span id="hide-savings-total-icon"></span>
+      <span id="hide-savings-total-text">Hide Total Savings</span>
+    </button>
+    <button class="hide-toggle-btn" id="hide-loan-total-btn">
+      <span id="hide-loan-total-icon"></span>
+      <span id="hide-loan-total-text">Hide Total Loan</span>
+    </button>
+  </div>
+  <div class="vault">
+    <p class="vault-label">Total Savings</p>
+    <p class="vault-total" id="total">₱0.00</p>
+    <p class="vault-sub" id="acct-count">0 accounts</p>
+    <div class="milestones" id="savings-milestones"></div>
+    <p class="milestone-label" id="savings-milestone-label"></p>
+    <div class="stitch"></div>
+  </div>
+
+  <div class="ledger">
+    <p class="ledger-heading">Your Accounts</p>
+    <div class="grid" id="grid"></div>
+    <button class="add-account" id="add-account-btn">+ Add Account</button>
+  </div>
+
+  <div class="ledger">
+    <div class="vault loan-vault">
+      <p class="vault-label">Total Remaining Loans</p>
+      <p class="vault-total" id="loan-total">₱0.00</p>
+      <p class="vault-sub" id="loan-count">0 loans</p>
+      <div class="milestones" id="loan-milestones"></div>
+      <p class="milestone-label" id="loan-milestone-label"></p>
+      <div class="stitch"></div>
     </div>
-  </div>
-
-  <div class="since">Counting since <span id="sinceDate">—</span></div>
-
-  <div class="live-timer" id="liveTimer">
-    <div class="lt-unit"><div class="lt-num" id="ltDays">0</div><div class="lt-label">days</div></div>
-    <div class="lt-sep">:</div>
-    <div class="lt-unit"><div class="lt-num" id="ltHours">00</div><div class="lt-label">hrs</div></div>
-    <div class="lt-sep">:</div>
-    <div class="lt-unit"><div class="lt-num" id="ltMins">00</div><div class="lt-label">min</div></div>
-    <div class="lt-sep">:</div>
-    <div class="lt-unit"><div class="lt-num" id="ltSecs">00</div><div class="lt-label">sec</div></div>
-  </div>
-
-  <div class="stats-row">
-    <div class="best-streak" id="bestStreak">
-      <span class="best-icon">🏆</span>
-      <span class="best-text">Longest streak: <span id="bestDays">0</span> days</span>
-    </div>
-    <div class="relapse-badge" id="relapseBadge">
-      <span class="relapse-icon">↺</span>
-      <span class="relapse-text">Relapses: <span id="relapseCount">0</span></span>
-    </div>
-  </div>
-
-  <div class="milestones">
-    <div class="section-label">Milestones</div>
-    <div class="milestone-row" id="milestoneRow"></div>
-  </div>
-
-  <div class="quote-card" id="quoteCard">Every day you count is a day you chose yourself.</div>
-
-  <div class="urge-section">
-    <button class="btn-urge" id="openUrge">⚡ Urge Alert — I'm feeling the pull right now</button>
-  </div>
-
-  <div class="actions">
-    <button class="btn-set" id="openSetDate">Set start date</button>
-    <button class="btn-reset" id="openReset">I slipped — reset counter</button>
-  </div>
-
-  <div class="history">
-    <div class="section-label">Past streaks</div>
-    <div id="historyList"><div class="history-empty">No past streaks yet. This is your first — make it count.</div></div>
-  </div>
-
-  <div class="backup-section">
-    <div class="section-label">Move to a new phone</div>
-    <p class="backup-hint">Your data lives only on this device. To keep it when switching phones, export a backup file here, then import it on the new phone.</p>
-    <div class="backup-actions">
-      <button class="btn-cancel" id="exportBtn">Export backup</button>
-      <button class="btn-cancel" id="importBtn">Import backup</button>
-    </div>
-    <input type="file" id="importFile" accept="application/json" style="display:none;">
-  </div>
-
-  <footer>
-    Your data is stored privately on this device and only visible to you.<br>
-    If gambling is affecting your life, the National Council on Problem Gambling helpline (US) is 1-800-522-4700, available 24/7.
-  </footer>
-</div>
-
-<div class="celebration-backdrop" id="reflection">
-  <div class="celebration-card reflect">
-    <div class="celebration-emoji">🤍</div>
-    <div class="celebration-title reflect-title">Let's pause for a moment</div>
-    <div class="celebration-sub">
-      This is your 5th reset. That's not a failure — it's a pattern worth noticing.
-      Before you place another bet, try one small thing: wait 24 hours, and tell someone
-      you trust how you're feeling right now. Urges fade faster than they feel like they will.
-      <br><br>
-      If it would help to talk to someone, the National Council on Problem Gambling
-      helpline (US) is free and confidential: <strong>1-800-522-4700</strong>.
-    </div>
-    <button class="btn-set" id="closeReflection">I hear you</button>
-  </div>
-</div>
-
-<div class="celebration-backdrop" id="celebration">
-  <div class="celebration-card">
-    <div class="celebration-emoji">🏆🎉🏆</div>
-    <div class="celebration-title">YOU DID IT!!!</div>
-    <div class="celebration-sub">One full year, bet-free. Go treat yourself and family — you've earned it.</div>
-    <button class="btn-set" id="closeCelebration">Thank you</button>
-  </div>
-</div>
-
-<div class="toast" id="milestoneToast">
-  <div class="toast-icon">🎉</div>
-  <div class="toast-text">
-    <div class="toast-title" id="toastTitle">Milestone reached!</div>
-    <div class="toast-sub">Go treat yourself and family</div>
-  </div>
-</div>
-
-<div class="celebration-backdrop" id="countdownModal">
-  <div class="celebration-card countdown-card">
-    <div class="celebration-emoji" id="cdEmoji">🌊</div>
-    <div class="celebration-title countdown-title" id="cdTitle">Stay with it</div>
-    <div class="celebration-sub" id="cdSub">Urges peak and fade on their own. Give it this time — you don't have to do anything else right now.</div>
-    <div class="countdown-timer" id="cdTimer">20:00</div>
-    <div class="countdown-bar-track"><div class="countdown-bar-fill" id="cdBarFill"></div></div>
-    <button class="btn-set" id="closeCountdown">I'll keep this open</button>
-  </div>
-</div>
-
-<div class="modal-backdrop" id="urgeModal">
-  <div class="modal">
-    <h2>Ride this out. It will pass.</h2>
-    <p class="lead" style="margin-bottom:0;">Urges peak and fade, usually within 15–20 minutes, even when they feel unbearable right now. You don't have to act on it to make it stop.</p>
-
-    <div class="urge-block">
-      <h3>Right now, try one of these</h3>
-      <ul>
-        <li>Delay it. Set a timer for 15 minutes and do nothing about the urge until it ends — you can always come back to it after.</li>
-        <li>Get up and move. A brisk walk or even 20 jumping jacks burns off the restless energy driving the urge.</li>
-        <li>Splash cold water on your face or hold a cold drink — it interrupts the spike and gives your body something else to focus on.</li>
-        <li>Breathe in a box: 4 seconds in, 4 hold, 4 out, 4 hold. Repeat 5 times.</li>
-        <li>Call or text someone — don't explain, just talk. Connection short-circuits the urge faster than willpower does.</li>
-        <li>Physically leave the situation: close the app, log out, put your phone in another room.</li>
-        <li>Name 5 things you can see, 4 you can hear, 3 you can touch — it pulls your brain out of autopilot.</li>
-      </ul>
-
-      <h3>If you place this bet anyway</h3>
-      <div class="urge-block consequences" style="padding-right:0;">
-        <ul>
-          <li>Your current streak of <strong id="urgeDayCount">0</strong> days resets to zero, and you start over from today.</li>
-          <li>The relief is short — most people report the dopamine spike is followed by regret within the hour, not lasting satisfaction.</li>
-          <li>Money spent here is money pulled from whatever it was meant for — bills, savings, or the people who count on you.</li>
-          <li>It gets harder to trust yourself next time, and harder for people close to you to trust you too.</li>
-          <li>One bet rarely stays one bet — it tends to open the door to the next, and the next.</li>
-        </ul>
+    <p class="ledger-heading">Your Loans</p>
+    <div class="grid" id="loan-grid"></div>
+    <button class="add-account" id="add-loan-btn">+ Add Loan</button>
+    <div class="loan-form-box" id="loan-form">
+      <input type="text" id="loan-name-input" placeholder="Loan name (e.g. Motorcycle loan)">
+      <input type="number" id="loan-amount-input" placeholder="Monthly installment amount" step="0.01" min="0">
+      <input type="date" id="loan-duedate-input" aria-label="next due date">
+      <input type="number" id="loan-installments-input" placeholder="Number of installments" min="1" step="1">
+      <div class="loan-form-actions">
+        <button id="loan-form-save">Add Loan</button>
+        <button id="loan-form-cancel">Cancel</button>
       </div>
     </div>
+  </div>
 
-    <div class="modal-actions" style="margin-top:18px;">
-      <button class="btn-cancel" id="closeUrge">Close</button>
-      <button class="btn-set" id="urgeCalledSomeone">I'm okay now</button>
+  <div class="ledger">
+    <p class="ledger-heading" style="font-size:14px;">Backup &amp; export</p>
+    <div class="backup-row">
+      <button class="backup-btn" id="backup-btn">Export / Back Up Now</button>
+      <label class="backup-btn" for="restore-input">Import Backup</label>
+      <input type="file" id="restore-input" accept="application/json" style="display:none;">
+    </div>
+    <p class="stamp" id="last-updated"></p>
+    <p class="stamp" id="backup-status"></p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="history-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="history-modal-title">Account history</h3>
+      <button class="modal-close" id="history-modal-close" aria-label="close">&times;</button>
+    </div>
+    <div class="history-filters" id="history-filters">
+      <button class="filter-btn" data-days="7">7 Days</button>
+      <button class="filter-btn" data-days="14">14 Days</button>
+      <button class="filter-btn" data-days="30">30 Days</button>
+      <button class="filter-btn" data-days="all">All</button>
+    </div>
+    <div class="modal-body" id="history-modal-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="goal-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Edit Goal</h3>
+      <button class="modal-close" id="goal-modal-close" aria-label="close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="loan-form-box open" style="margin-top:0;border:none;padding:0;">
+        <input type="number" id="goal-amount-input" placeholder="Goal amount (\u20B1)" min="0" step="100">
+        <input type="date" id="goal-date-input" aria-label="target date to reach this goal">
+        <div class="loan-form-actions">
+          <button id="goal-modal-save">Save Goal</button>
+          <button id="goal-modal-cancel">Cancel</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="modal-backdrop" id="setModal">
-  <div class="modal">
-    <h2>Set your start date</h2>
-    <p>This is the day your current streak began. You can back-date it if you've already been bet-free for a while.</p>
-    <input type="date" id="dateInput">
-    <div class="modal-actions">
-      <button class="btn-cancel" id="cancelSet">Cancel</button>
-      <button class="btn-set" id="confirmSet">Save</button>
+<div class="modal-overlay" id="calculator-modal">
+  <div class="modal-box" style="max-width: 300px;">
+    <div class="modal-head">
+      <h3>Calculator</h3>
+      <button class="modal-close" id="calculator-modal-close" aria-label="close">&times;</button>
     </div>
-  </div>
-</div>
+    <div class="modal-body">
+      <div class="calc-display" id="calc-display">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn clear" data-action="clear">C</button>
+        <button class="calc-btn clear" data-action="backspace">&larr;</button>
+        <button class="calc-btn op" data-op="%">%</button>
+        <button class="calc-btn op" data-op="/">&divide;</button>
 
-<div class="modal-backdrop" id="resetModal">
-  <div class="modal">
-    <h2>Log today and start fresh</h2>
-    <p>A slip doesn't erase the days you already had. That streak will be saved to your history, and a new one starts today.</p>
-    <div class="modal-actions">
-      <button class="btn-cancel" id="cancelReset">Cancel</button>
-      <button class="btn-set" id="confirmReset" style="background:#b8654f;color:#f0ead9;">Confirm reset</button>
+        <button class="calc-btn" data-digit="7">7</button>
+        <button class="calc-btn" data-digit="8">8</button>
+        <button class="calc-btn" data-digit="9">9</button>
+        <button class="calc-btn op" data-op="*">&times;</button>
+
+        <button class="calc-btn" data-digit="4">4</button>
+        <button class="calc-btn" data-digit="5">5</button>
+        <button class="calc-btn" data-digit="6">6</button>
+        <button class="calc-btn op" data-op="-">&minus;</button>
+
+        <button class="calc-btn" data-digit="1">1</button>
+        <button class="calc-btn" data-digit="2">2</button>
+        <button class="calc-btn" data-digit="3">3</button>
+        <button class="calc-btn op" data-op="+">+</button>
+
+        <button class="calc-btn" data-digit="0" style="grid-column: span 2;">0</button>
+        <button class="calc-btn" data-action="decimal">.</button>
+        <button class="calc-btn equals" data-action="equals">=</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-const MILESTONES = [
-  {days: 30, label: '1', unit: 'month'},
-  {days: 60, label: '2', unit: 'months'},
-  {days: 90, label: '3', unit: 'months'},
-  {days: 120, label: '4', unit: 'months'},
-  {days: 150, label: '5', unit: 'months'},
-  {days: 180, label: '6', unit: 'months'},
-  {days: 210, label: '7', unit: 'months'},
-  {days: 240, label: '8', unit: 'months'},
-  {days: 270, label: '9', unit: 'months'},
-  {days: 300, label: '10', unit: 'months'},
-  {days: 330, label: '11', unit: 'months'},
-  {days: 365, label: '1', unit: 'year'},
-];
+(function(){
+  const EYE_OPEN_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYE_OFF_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  const MASK_STRING = '\u20B1 \u25CF\u25CF\u25CF\u25CF\u25CF\u25CF';
+  const HIDE_SAVINGS_TOTAL_KEY = 'ph_savings_tracker_hide_savings_total';
+  const HIDE_LOAN_TOTAL_KEY = 'ph_savings_tracker_hide_loan_total';
+  const hideSavingsTotalBtn = document.getElementById('hide-savings-total-btn');
+  const hideSavingsTotalIconEl = document.getElementById('hide-savings-total-icon');
+  const hideSavingsTotalTextEl = document.getElementById('hide-savings-total-text');
+  const hideLoanTotalBtn = document.getElementById('hide-loan-total-btn');
+  const hideLoanTotalIconEl = document.getElementById('hide-loan-total-icon');
+  const hideLoanTotalTextEl = document.getElementById('hide-loan-total-text');
+  let hideSavingsTotal = false;
+  let hideLoanTotal = false;
 
-const QUOTES = [
-  "The house always wins in the end. Walking away is the only real win.",
-  "A bet is a bill for a feeling that never gets paid off.",
-  "Every day you don't gamble is money, trust, and time you keep.",
-  "The urge to chase a loss is the addiction talking, not logic.",
-  "You're not missing out by not betting. You're opting out of losing.",
-  "No win ever felt as good as staying in control feels tomorrow.",
-  "Gambling sells hope by the minute and takes far more than it gives.",
-  "The best hand you can play today is the one where you don't sit at the table.",
-  "The odds are built to take from you slowly. Quitting is the only guaranteed payout.",
-  "A near miss isn't a sign to keep going. It's the game convincing you to lose more.",
-  "The next spin doesn't owe you anything. It never did.",
-  "What you don't stake today, you still have tomorrow.",
-  "Every bet placed is a future you're borrowing against.",
-  "The casino was built on people who believed 'just one more' would fix it.",
-  "Discipline today is cheaper than regret tomorrow.",
-  "You can't out-bet a system designed to outlast you.",
-  "A streak of losses isn't bad luck waiting to turn. It's the math working as designed.",
-  "Staying out of the game is the only move where you can't lose.",
-  "Your worth was never tied to a payout. It doesn't start now.",
-  "The rush fades in minutes. The damage doesn't.",
-  "Nobody ever gambled their way back to who they were before they started.",
-  "The safest bet is the one you never place.",
-  "Today's win doesn't cancel yesterday's loss. It just delays the reckoning.",
-  "Boredom is not a reason to bet. It's a reason to call someone.",
-  "The app, the site, the table — they're all designed to make 'enough' impossible.",
-  "You are allowed to walk away with nothing on the table and still be winning.",
-  "Every day counted here is a day the odds didn't get to test you.",
-  "Chasing losses is a trapdoor dressed up as a comeback.",
-  "The version of you a year from now is built by what you don't do today.",
-  "Quiet, boring, bet-free days are the ones that actually add up to something.",
-];
+  const grid = document.getElementById('grid');
+  const totalEl = document.getElementById('total');
+  const countEl = document.getElementById('acct-count');
+  const savingsMilestonesEl = document.getElementById('savings-milestones');
+  const savingsMilestoneLabelEl = document.getElementById('savings-milestone-label');
+  const addBtn = document.getElementById('add-account-btn');
+  const lastUpdatedEl = document.getElementById('last-updated');
+  const historyModal = document.getElementById('history-modal');
+  const historyModalTitle = document.getElementById('history-modal-title');
+  const historyModalBody = document.getElementById('history-modal-body');
+  const historyModalClose = document.getElementById('history-modal-close');
+  const historyFilters = document.getElementById('history-filters');
+  const goalModal = document.getElementById('goal-modal');
+  const goalModalClose = document.getElementById('goal-modal-close');
+  const goalAmountInput = document.getElementById('goal-amount-input');
+  const goalDateInput = document.getElementById('goal-date-input');
+  const goalModalSave = document.getElementById('goal-modal-save');
+  const goalModalCancel = document.getElementById('goal-modal-cancel');
+  const calculatorModal = document.getElementById('calculator-modal');
+  const calculatorModalClose = document.getElementById('calculator-modal-close');
+  const calcDisplayEl = document.getElementById('calc-display');
+  let currentGoalEditId = null;
+  const backupBtn = document.getElementById('backup-btn');
+  const restoreInput = document.getElementById('restore-input');
+  const backupStatusEl = document.getElementById('backup-status');
+  const loanGrid = document.getElementById('loan-grid');
+  const loanTotalEl = document.getElementById('loan-total');
+  const loanCountEl = document.getElementById('loan-count');
+  const loanMilestonesEl = document.getElementById('loan-milestones');
+  const loanMilestoneLabelEl = document.getElementById('loan-milestone-label');
+  const addLoanBtn = document.getElementById('add-loan-btn');
+  const loanForm = document.getElementById('loan-form');
+  const loanNameInput = document.getElementById('loan-name-input');
+  const loanAmountInput = document.getElementById('loan-amount-input');
+  const loanDueDateInput = document.getElementById('loan-duedate-input');
+  const loanInstallmentsInput = document.getElementById('loan-installments-input');
+  const loanFormSave = document.getElementById('loan-form-save');
+  const loanFormCancel = document.getElementById('loan-form-cancel');
+  const LOANS_STORAGE_KEY = 'ph_savings_tracker_loans';
+  let loans = [];
+  const BACKUP_KEY = 'ph_savings_tracker_last_backup';
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+  const STORAGE_KEY = 'ph_savings_tracker_accounts';
 
-let state = { startDate: null, history: [] };
+  const BANK_DOMAINS = {
+    'bdo': 'bdo.com.ph',
+    'bpi': 'bpi.com.ph',
+    'metrobank': 'metrobank.com.ph',
+    'unionbank': 'unionbank.com',
+    'union bank': 'unionbank.com',
+    'security bank': 'securitybank.com',
+    'landbank': 'landbank.com',
+    'pnb': 'pnb.com.ph',
+    'philippine national bank': 'pnb.com.ph',
+    'rcbc': 'rcbc.com',
+    'eastwest': 'eastwestbanker.com',
+    'east west': 'eastwestbanker.com',
+    'chinabank': 'chinabank.ph',
+    'china bank': 'chinabank.ph',
+    'gcash': 'gcash.com',
+    'maya': 'maya.ph',
+    'paymaya': 'maya.ph',
+    'ing': 'ing.com.ph',
+    'cimb': 'cimbbank.com.ph',
+    'robinsons bank': 'robinsonsbank.com.ph',
+    'psbank': 'psbank.com.ph',
+    'sterling bank': 'sterlingbankasia.com',
+    'dbp': 'dbp.ph',
+    'development bank': 'dbp.ph',
+    'ucpb': 'ucpb.com',
+    'tonik': 'tonikbank.com',
+    'seabank': 'seabank.ph',
+    'komo': 'komo.ph',
+    'gotyme': 'gotyme.com.ph',
+    'go tyme': 'gotyme.com.ph',
+    'maybank': 'maybank.com.ph',
+    'uno digital': 'unodigitalbank.ph',
+    'unodigital': 'unodigitalbank.ph'
+  };
 
-function daysBetween(a, b) {
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const d1 = new Date(a.getFullYear(), a.getMonth(), a.getDate());
-  const d2 = new Date(b.getFullYear(), b.getMonth(), b.getDate());
-  return Math.round((d2 - d1) / msPerDay);
-}
-
-function formatDate(d) {
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-async function loadState() {
-  try {
-    const raw = localStorage.getItem('bet-free-state');
-    if (raw) {
-      state = JSON.parse(raw);
+  function bankDomain(name){
+    const n = name.toLowerCase();
+    for(const key in BANK_DOMAINS){
+      if(n.includes(key)) return BANK_DOMAINS[key];
     }
-  } catch (e) {
-    // no existing state yet, or storage unavailable
-  }
-  if (!state.startDate) {
-    state.startDate = new Date().toISOString();
-    await saveState();
-  }
-  if (!state.history) state.history = [];
-  if (!state.notifiedMilestones) state.notifiedMilestones = [];
-  if (!state.resetCount) state.resetCount = 0;
-  render();
-}
-
-async function saveState() {
-  try {
-    localStorage.setItem('bet-free-state', JSON.stringify(state));
-  } catch (e) {
-    console.error('Could not save', e);
-  }
-}
-
-function render() {
-  const start = new Date(state.startDate);
-  const today = new Date();
-  const days = Math.max(0, daysBetween(start, today));
-
-  document.getElementById('dayCount').textContent = days;
-  document.getElementById('dayLabel').textContent = days === 1 ? 'day' : 'days';
-  document.getElementById('sinceDate').textContent = formatDate(start);
-  updateLiveTimer();
-
-  // longest streak = best of all past streaks and the current one
-  const bestPast = state.history.reduce((max, h) => Math.max(max, h.length), 0);
-  const best = Math.max(bestPast, days);
-  const bestBadge = document.getElementById('bestStreak');
-  if (days >= best && days > 0) {
-    bestBadge.querySelector('.best-text').innerHTML = `Longest streak: <span id="bestDays">${best}</span> days — that's now!`;
-  } else {
-    bestBadge.querySelector('.best-text').innerHTML = `Longest streak: <span id="bestDays">${best}</span> days`;
+    return null;
   }
 
-  // relapse count = number of logged past streaks
-  document.getElementById('relapseCount').textContent = state.history.length;
-
-  // ring progress: fill toward next milestone
-  const next = MILESTONES.find(m => m.days > days) || MILESTONES[MILESTONES.length - 1];
-  const prevIdx = MILESTONES.findIndex(m => m.days === next.days) - 1;
-  const prevDays = prevIdx >= 0 ? MILESTONES[prevIdx].days : 0;
-  const span = Math.max(1, next.days - prevDays);
-  const progressInSpan = Math.min(1, (days - prevDays) / span);
-  const circumference = 2 * Math.PI * 90;
-  const filled = circumference * progressInSpan;
-  document.getElementById('ringProgress').setAttribute('stroke-dasharray', `${filled} ${circumference}`);
-
-  const remaining = next.days - days;
-  document.getElementById('nextMilestone').textContent =
-    remaining > 0 ? `${remaining} day${remaining === 1 ? '' : 's'} to ${next.label} ${next.unit}` : 'All milestones reached';
-
-  // milestone badges
-  const row = document.getElementById('milestoneRow');
-  row.innerHTML = '';
-  MILESTONES.forEach(m => {
-    const el = document.createElement('div');
-    el.className = 'badge' + (days >= m.days ? ' reached' : '');
-    el.innerHTML = `<div class="num">${m.label}</div><div class="unit">${m.unit}</div>`;
-    row.appendChild(el);
-  });
-
-  checkMilestones(days);
-
-  // quote — stable per day
-  const qIdx = days % QUOTES.length;
-  document.getElementById('quoteCard').textContent = QUOTES[qIdx];
-
-  // history
-  const histEl = document.getElementById('historyList');
-  if (!state.history.length) {
-    histEl.innerHTML = '<div class="history-empty">No past streaks yet. This is your first — make it count.</div>';
-  } else {
-    histEl.innerHTML = '';
-    [...state.history].reverse().forEach(h => {
-      const item = document.createElement('div');
-      item.className = 'history-item';
-      item.innerHTML = `<span class="streak-date">${formatDate(new Date(h.start))} – ${formatDate(new Date(h.end))}</span><span class="streak-len">${h.length} day${h.length === 1 ? '' : 's'}</span>`;
-      histEl.appendChild(item);
-    });
+  function initials(name){
+    const words = name.trim().split(/\s+/).filter(Boolean);
+    if(!words.length) return '?';
+    return words.slice(0,2).map(w=>w[0]).join('').toUpperCase();
   }
-}
 
-function checkMilestones(days) {
-  const reached = MILESTONES.find(m => days === m.days);
-  if (reached && !state.notifiedMilestones.includes(reached.days)) {
-    state.notifiedMilestones.push(reached.days);
-    saveState();
-    if (reached.days === 365) {
-      showCelebration();
+  function logoHtml(name){
+    const domain = bankDomain(name);
+    const fallback = `<div class="bank-fallback" style="display:${domain ? 'none' : 'flex'};">${initials(name)}</div>`;
+    if(!domain) return fallback;
+    return `<img class="bank-logo" src="https://www.google.com/s2/favicons?sz=128&domain=${domain}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">${fallback}`;
+  }
+
+  let accounts = [];
+  let openEditorId = null;
+  let currentHistoryId = null;
+  let currentHistoryDays = 'all';
+  let currentHistoryType = 'account';
+
+  const PALETTE = [
+    { bg:'#E4F0EC', border:'#1F6F5C', text:'#14493D', hover:'rgba(31,111,92,0.12)' },
+    { bg:'#F5E6DE', border:'#B24B32', text:'#7E351F', hover:'rgba(178,75,50,0.12)' },
+    { bg:'#F7EFD9', border:'#C9A227', text:'#8A6C13', hover:'rgba(201,162,39,0.14)' },
+    { bg:'#EFE3EC', border:'#7A4869', text:'#55324A', hover:'rgba(122,72,105,0.12)' },
+    { bg:'#E2E8F0', border:'#3D5A80', text:'#253B54', hover:'rgba(61,90,128,0.12)' },
+    { bg:'#E7EEDD', border:'#5B7A3D', text:'#3E5629', hover:'rgba(91,122,61,0.12)' }
+  ];
+
+  function themeFor(index){
+    return PALETTE[index % PALETTE.length];
+  }
+
+  function fmt(n){
+    return '₱' + Number(n).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function doBackup(){
+    try{
+      const payload = { accounts, loans };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0,10);
+      a.href = url;
+      a.download = `savings-backup-${stamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      localStorage.setItem(BACKUP_KEY, String(Date.now()));
+      updateBackupStatus();
+    }catch(e){
+      console.error('backup failed', e);
+    }
+  }
+
+  function maybeAutoBackup(){
+    let last = null;
+    try{ last = Number(localStorage.getItem(BACKUP_KEY)) || null; }catch(e){}
+    if(!accounts.length && !loans.length) return;
+    if(!last || (Date.now() - last) >= SEVEN_DAYS_MS){
+      doBackup();
     } else {
-      const label = `${reached.label} ${reached.unit}, bet-free!`;
-      showToast(label);
+      updateBackupStatus();
     }
   }
-}
 
-function showCelebration() {
-  document.getElementById('celebration').classList.add('show');
-}
-
-let toastTimer = null;
-function showToast(title) {
-  const toast = document.getElementById('milestoneToast');
-  document.getElementById('toastTitle').textContent = title;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
-}
-
-document.getElementById('closeCelebration').onclick = () => {
-  document.getElementById('celebration').classList.remove('show');
-};
-
-// Modal wiring
-const setModal = document.getElementById('setModal');
-const resetModal = document.getElementById('resetModal');
-
-document.getElementById('openSetDate').onclick = () => {
-  document.getElementById('dateInput').value = new Date(state.startDate).toISOString().slice(0,10);
-  setModal.classList.add('open');
-};
-document.getElementById('cancelSet').onclick = () => setModal.classList.remove('open');
-document.getElementById('confirmSet').onclick = async () => {
-  const val = document.getElementById('dateInput').value;
-  if (val) {
-    state.startDate = new Date(val + 'T00:00:00').toISOString();
-    await saveState();
-    render();
-  }
-  setModal.classList.remove('open');
-};
-
-const urgeModal = document.getElementById('urgeModal');
-document.getElementById('openUrge').onclick = () => {
-  const start = new Date(state.startDate);
-  const today = new Date();
-  document.getElementById('urgeDayCount').textContent = Math.max(0, daysBetween(start, today));
-  urgeModal.classList.add('open');
-};
-document.getElementById('closeUrge').onclick = () => urgeModal.classList.remove('open');
-document.getElementById('urgeCalledSomeone').onclick = () => {
-  urgeModal.classList.remove('open');
-  startUrgeCountdown();
-};
-
-let countdownInterval = null;
-function startUrgeCountdown() {
-  const TOTAL_SECONDS = 15 * 60;
-  let remaining = TOTAL_SECONDS;
-  const modal = document.getElementById('countdownModal');
-  const timerEl = document.getElementById('cdTimer');
-  const barFill = document.getElementById('cdBarFill');
-  const titleEl = document.getElementById('cdTitle');
-  const subEl = document.getElementById('cdSub');
-  const emojiEl = document.getElementById('cdEmoji');
-  const btn = document.getElementById('closeCountdown');
-
-  titleEl.textContent = 'Stay with it';
-  subEl.textContent = "Urges peak and fade on their own. Give it this time — you don't have to do anything else right now.";
-  emojiEl.textContent = '🌊';
-  btn.textContent = "I'll keep this open";
-  barFill.style.width = '100%';
-
-  modal.classList.add('show');
-  requestWakeLock();
-  clearInterval(countdownInterval);
-
-  function tick() {
-    const mins = Math.floor(remaining / 60);
-    const secs = remaining % 60;
-    timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-    barFill.style.width = `${(remaining / TOTAL_SECONDS) * 100}%`;
-
-    if (remaining <= 0) {
-      clearInterval(countdownInterval);
-      releaseWakeLock();
-      timerEl.textContent = '00:00';
-      emojiEl.textContent = '🤍';
-      titleEl.textContent = "You made it through";
-      subEl.textContent = "The peak has passed. However you're feeling now, you stayed in control of this moment. That counts.";
-      btn.textContent = 'Close';
+  function updateBackupStatus(){
+    let last = null;
+    try{ last = Number(localStorage.getItem(BACKUP_KEY)) || null; }catch(e){}
+    if(!last){
+      backupStatusEl.textContent = 'no backup yet';
       return;
     }
-    remaining--;
+    const lastDate = new Date(last);
+    const dueDate = new Date(last + SEVEN_DAYS_MS);
+    backupStatusEl.textContent = `last backup ${lastDate.toLocaleDateString('en-PH', {dateStyle:'medium'})} · next due ${dueDate.toLocaleDateString('en-PH', {dateStyle:'medium'})}`;
   }
 
-  tick();
-  countdownInterval = setInterval(tick, 1000);
-}
+  backupBtn.addEventListener('click', doBackup);
 
-document.getElementById('closeCountdown').onclick = () => {
-  clearInterval(countdownInterval);
-  releaseWakeLock();
-  document.getElementById('countdownModal').classList.remove('show');
-};
+  restoreInput.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const parsed = JSON.parse(reader.result);
+        if(Array.isArray(parsed)){
+          parsed.forEach(a=>{
+            if(!Array.isArray(a.history)) a.history = [];
+            if(typeof a.accountNumber !== 'string') a.accountNumber = '';
+            if(typeof a.hidden !== 'boolean') a.hidden = false;
+              if(typeof a.goal !== 'number') a.goal = 0;
+              if(typeof a.goalTargetDate !== 'string') a.goalTargetDate = '';
+          });
+          accounts = parsed;
+        } else if(parsed && typeof parsed === 'object'){
+          if(Array.isArray(parsed.accounts)){
+            parsed.accounts.forEach(a=>{
+              if(!Array.isArray(a.history)) a.history = [];
+              if(typeof a.accountNumber !== 'string') a.accountNumber = '';
+              if(typeof a.hidden !== 'boolean') a.hidden = false;
+              if(typeof a.goal !== 'number') a.goal = 0;
+              if(typeof a.goalTargetDate !== 'string') a.goalTargetDate = '';
+            });
+            accounts = parsed.accounts;
+          }
+          if(Array.isArray(parsed.loans)){
+            parsed.loans.forEach(l=>{
+              if(!Array.isArray(l.history)) l.history = [];
+              if(typeof l.hidden !== 'boolean') l.hidden = false;
+              const isDone = l.installmentsPaid >= l.installmentsTotal;
+              if(isDone && !l.finishedAt) l.finishedAt = Date.now();
+            });
+            loans = parsed.loans;
+          }
+        } else {
+          throw new Error('invalid file');
+        }
+        save();
+        saveLoans();
+        render();
+        renderLoans();
+      }catch(err){
+        alert('Could not read that backup file.');
+      }
+      restoreInput.value = '';
+    };
+    reader.readAsText(file);
+  });
 
-let wakeLock = null;
-async function requestWakeLock() {
-  try {
-    if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => { wakeLock = null; });
+  function load(){
+    let stored = null;
+    try{ stored = localStorage.getItem(STORAGE_KEY); }catch(e){}
+    if(stored){
+      try{ accounts = JSON.parse(stored); }catch(e){ accounts = []; }
     }
-  } catch (e) {
-    // wake lock not available or was denied — countdown still works, screen just may dim
-  }
-}
-function releaseWakeLock() {
-  if (wakeLock) {
-    wakeLock.release().catch(() => {});
-    wakeLock = null;
-  }
-}
-// Re-acquire the wake lock if the tab regains visibility mid-countdown
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && countdownInterval && !wakeLock) {
-    requestWakeLock();
-  }
-});
-
-document.getElementById('openReset').onclick = () => resetModal.classList.add('open');
-document.getElementById('cancelReset').onclick = () => resetModal.classList.remove('open');
-document.getElementById('confirmReset').onclick = async () => {
-  const start = new Date(state.startDate);
-  const today = new Date();
-  const length = Math.max(0, daysBetween(start, today));
-  state.history.push({ start: state.startDate, end: today.toISOString(), length });
-  state.startDate = today.toISOString();
-  state.notifiedMilestones = [];
-  state.resetCount = (state.resetCount || 0) + 1;
-  await saveState();
-  render();
-  resetModal.classList.remove('open');
-  if (state.resetCount % 5 === 0) {
-    document.getElementById('reflection').classList.add('show');
-  }
-};
-
-document.getElementById('closeReflection').onclick = () => {
-  document.getElementById('reflection').classList.remove('show');
-};
-
-function pad(n) { return String(n).padStart(2, '0'); }
-
-function updateLiveTimer() {
-  if (!state.startDate) return;
-  const start = new Date(state.startDate).getTime();
-  const now = Date.now();
-  let diff = Math.max(0, now - start);
-
-  const day = Math.floor(diff / 86400000);
-  diff -= day * 86400000;
-  const hrs = Math.floor(diff / 3600000);
-  diff -= hrs * 3600000;
-  const mins = Math.floor(diff / 60000);
-  diff -= mins * 60000;
-  const secs = Math.floor(diff / 1000);
-
-  document.getElementById('ltDays').textContent = day;
-  document.getElementById('ltHours').textContent = pad(hrs);
-  document.getElementById('ltMins').textContent = pad(mins);
-  document.getElementById('ltSecs').textContent = pad(secs);
-}
-
-setInterval(updateLiveTimer, 1000);
-
-document.getElementById('exportBtn').onclick = () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const dateStamp = new Date().toISOString().slice(0, 10);
-  a.href = url;
-  a.download = `steady-backup-${dateStamp}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
-
-document.getElementById('importBtn').onclick = () => {
-  document.getElementById('importFile').click();
-};
-
-document.getElementById('importFile').onchange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const text = await file.text();
-    const imported = JSON.parse(text);
-    if (!imported.startDate) throw new Error('Invalid backup file');
-    state = imported;
-    if (!state.history) state.history = [];
-    if (!state.notifiedMilestones) state.notifiedMilestones = [];
-    if (!state.resetCount) state.resetCount = 0;
-    await saveState();
+    accounts.forEach(a=>{
+      if(!Array.isArray(a.history)) a.history = [];
+      if(typeof a.accountNumber !== 'string') a.accountNumber = '';
+      if(typeof a.hidden !== 'boolean') a.hidden = false;
+              if(typeof a.goal !== 'number') a.goal = 0;
+              if(typeof a.goalTargetDate !== 'string') a.goalTargetDate = '';
+    });
+    if(!accounts || !accounts.length){
+      accounts = [
+        {id:'a1', name:'Checking', balance:0, history:[], accountNumber:'', hidden:false, goal:0, goalTargetDate:''},
+        {id:'a2', name:'Savings', balance:0, history:[], accountNumber:'', hidden:false, goal:0, goalTargetDate:''}
+      ];
+      save();
+    }
     render();
-    alert('Backup restored successfully.');
-  } catch (err) {
-    alert('This file could not be read as a Steady backup. Please choose a valid export file.');
+    maybeAutoBackup();
   }
-  e.target.value = '';
-};
 
-loadState();
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts)); }catch(e){}
+    stampUpdated();
+  }
 
-if ('serviceWorker' in navigator) {
+  function loadLoans(){
+    let stored = null;
+    try{ stored = localStorage.getItem(LOANS_STORAGE_KEY); }catch(e){}
+    if(stored){
+      try{ loans = JSON.parse(stored); }catch(e){ loans = []; }
+    }
+    loans.forEach(l=>{
+      if(!Array.isArray(l.history)) l.history = [];
+      if(typeof l.hidden !== 'boolean') l.hidden = false;
+      const isDone = l.installmentsPaid >= l.installmentsTotal;
+      if(isDone && !l.finishedAt) l.finishedAt = Date.now();
+    });
+    renderLoans();
+  }
+
+  function saveLoans(){
+    try{ localStorage.setItem(LOANS_STORAGE_KEY, JSON.stringify(loans)); }catch(e){}
+  }
+
+  function formatCountdown(dueDateStr){
+    const due = new Date(dueDateStr + 'T00:00:00').getTime();
+    const diff = due - Date.now();
+    if(diff <= 0){
+      const overdueDays = Math.floor(-diff / 86400000);
+      return overdueDays === 0 ? 'due today' : `overdue by ${overdueDays} day${overdueDays===1?'':'s'}`;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  function updateCountdowns(){
+    document.querySelectorAll('.loan-countdown').forEach(el=>{
+      const due = el.getAttribute('data-due');
+      if(!due) return;
+      el.textContent = formatCountdown(due);
+      const overdue = new Date(due + 'T00:00:00').getTime() <= Date.now();
+      el.style.color = overdue ? 'var(--clay-dark)' : 'var(--card-accent, var(--teal-dark))';
+    });
+  }
+
+  setInterval(updateCountdowns, 1000);
+
+  function renderLoanMilestones(){
+    const totalOriginal = loans.reduce((s,l)=> s + (l.amount * l.installmentsTotal), 0);
+    const totalPaid = loans.reduce((s,l)=> s + (l.amount * l.installmentsPaid), 0);
+    const percentPaid = totalOriginal > 0 ? (totalPaid / totalOriginal) * 100 : 0;
+
+    let achieved = 0;
+    for(let i=1;i<=10;i++){
+      if(percentPaid >= i*10) achieved = i;
+      else break;
+    }
+    loanMilestonesEl.innerHTML = Array.from({length:10}, (_,i)=>
+      `<span class="milestone-dot ${i < achieved ? 'achieved' : ''}"></span>`
+    ).join('');
+    if(loans.length === 0){
+      loanMilestoneLabelEl.textContent = 'add a loan to start tracking milestones';
+    } else if(achieved >= 10){
+      loanMilestoneLabelEl.textContent = 'milestone 10 of 10 — you are loan-free!';
+    } else {
+      loanMilestoneLabelEl.textContent = `milestone ${achieved} of 10 — ${percentPaid.toFixed(0)}% paid off`;
+    }
+    return percentPaid;
+  }
+
+  const SEVEN_DAYS_MS_LOAN = 7 * 24 * 60 * 60 * 1000;
+  const FINISHED_THEME = { bg:'#DCEEDC', border:'#2F7A3D', text:'#1F5C29', hover:'rgba(47,122,61,0.12)' };
+
+  function pruneFinishedLoans(){
+    const now = Date.now();
+    const before = loans.length;
+    loans = loans.filter(l=>{
+      const isDone = l.installmentsPaid >= l.installmentsTotal;
+      if(isDone && l.finishedAt && (now - l.finishedAt) >= SEVEN_DAYS_MS_LOAN) return false;
+      return true;
+    });
+    if(loans.length !== before) saveLoans();
+  }
+
+  function renderLoans(){
+    pruneFinishedLoans();
+    const totalRemaining = loans.reduce((sum, l)=> sum + (l.amount * Math.max(0, l.installmentsTotal - l.installmentsPaid)), 0);
+    loanTotalEl.textContent = hideLoanTotal ? MASK_STRING : fmt(totalRemaining);
+    loanCountEl.textContent = loans.length + (loans.length === 1 ? ' loan' : ' loans');
+    const percentPaid = renderLoanMilestones();
+
+    loanGrid.innerHTML = '';
+    loans.forEach((loan, idx)=>{
+      const isDone = loan.installmentsPaid >= loan.installmentsTotal;
+      const theme = isDone ? FINISHED_THEME : themeFor(idx);
+      const card = document.createElement('div');
+      card.className = 'card' + (percentPaid >= 100 && loans.length > 0 ? ' milestone-gold' : '');
+      card.style.background = theme.bg;
+      card.style.borderLeftColor = theme.border;
+      card.style.setProperty('--card-accent', theme.text);
+      card.style.setProperty('--card-hover', theme.hover);
+      const currentInstallment = Math.min(loan.installmentsPaid, loan.installmentsTotal);
+      let daysLeftNote = '';
+      if(isDone && loan.finishedAt){
+        const daysLeft = Math.max(0, Math.ceil((SEVEN_DAYS_MS_LOAN - (Date.now() - loan.finishedAt)) / 86400000));
+        daysLeftNote = `<p class="loan-finished-note">Loan is finished. This will auto-delete in ${daysLeft} day${daysLeft===1?'':'s'}.</p>`;
+      }
+      card.innerHTML = `
+        <div class="card-top">
+          <p class="loan-name">${escapeHtml(loan.name)}</p>
+          <button class="eye-btn" data-loan-eye="${loan.id}" aria-label="toggle amount visibility">${loan.hidden ? EYE_OFF_SVG : EYE_OPEN_SVG}</button>
+          <button class="del-btn" data-loan-del="${loan.id}" aria-label="delete loan">&times;</button>
+        </div>
+        <p class="acct-balance">${loan.hidden ? MASK_STRING : fmt(loan.amount)} <span style="font-size:12px;font-weight:400;color:var(--text-mute);">/month</span></p>
+        <p class="loan-meta">${isDone ? 'loan fully paid' : `installment ${currentInstallment} of ${loan.installmentsTotal}`}</p>
+        ${isDone ? daysLeftNote : `<p class="loan-countdown" data-due="${loan.dueDate}">${formatCountdown(loan.dueDate)}</p>`}
+        <button class="pay-btn" data-pay="${loan.id}" ${isDone ? 'disabled' : ''}>${isDone ? 'loan completed' : 'mark as paid'}</button>
+        <button class="history-link" data-loan-history="${loan.id}">View History</button>
+      `;
+      loanGrid.appendChild(card);
+    });
+
+    loanGrid.querySelectorAll('[data-pay]').forEach(b=>b.addEventListener('click', ()=>payLoan(b.getAttribute('data-pay'))));
+    loanGrid.querySelectorAll('[data-loan-del]').forEach(b=>b.addEventListener('click', ()=>removeLoan(b.getAttribute('data-loan-del'))));
+    loanGrid.querySelectorAll('[data-loan-eye]').forEach(b=>b.addEventListener('click', ()=>toggleLoanHidden(b.getAttribute('data-loan-eye'))));
+    loanGrid.querySelectorAll('[data-loan-history]').forEach(b=>b.addEventListener('click', ()=>openHistory('loan', b.getAttribute('data-loan-history'))));
+    updateCountdowns();
+  }
+
+  function payLoan(id){
+    const loan = loans.find(l=>l.id===id);
+    if(!loan || loan.installmentsPaid >= loan.installmentsTotal) return;
+    const dueDateAtPayment = loan.dueDate;
+    loan.installmentsPaid += 1;
+    if(!Array.isArray(loan.history)) loan.history = [];
+    loan.history.unshift({ ts: Date.now(), amount: loan.amount, installmentNumber: loan.installmentsPaid, dueDateAtPayment });
+    if(loan.installmentsPaid < loan.installmentsTotal){
+      const d = new Date(loan.dueDate + 'T00:00:00');
+      d.setMonth(d.getMonth() + 1);
+      loan.dueDate = d.toISOString().slice(0,10);
+    } else {
+      loan.finishedAt = Date.now();
+    }
+    saveLoans();
+    renderLoans();
+  }
+
+  function removeLoan(id){
+    if(!confirm('Are you sure you want to delete this entry?')) return;
+    loans = loans.filter(l=>l.id!==id);
+    saveLoans();
+    renderLoans();
+  }
+
+  addLoanBtn.addEventListener('click', ()=>{
+    loanForm.classList.toggle('open');
+  });
+
+  loanFormCancel.addEventListener('click', ()=>{
+    loanForm.classList.remove('open');
+    loanNameInput.value = '';
+    loanAmountInput.value = '';
+    loanDueDateInput.value = '';
+    loanInstallmentsInput.value = '';
+  });
+
+  loanFormSave.addEventListener('click', ()=>{
+    const name = loanNameInput.value.trim();
+    const amount = parseFloat(loanAmountInput.value);
+    const dueDate = loanDueDateInput.value;
+    const installmentsTotal = parseInt(loanInstallmentsInput.value, 10);
+    if(!name || isNaN(amount) || amount <= 0 || !dueDate || isNaN(installmentsTotal) || installmentsTotal <= 0){
+      alert('Please fill in the loan name, amount, due date, and number of installments.');
+      return;
+    }
+    loans.push({
+      id: 'l' + Date.now(),
+      name,
+      amount,
+      dueDate,
+      installmentsTotal,
+      installmentsPaid: 0,
+      history: [],
+      hidden: false
+    });
+    saveLoans();
+    renderLoans();
+    loanNameInput.value = '';
+    loanAmountInput.value = '';
+    loanDueDateInput.value = '';
+    loanInstallmentsInput.value = '';
+    loanForm.classList.remove('open');
+  });
+
+  function stampUpdated(){
+    const now = new Date();
+    lastUpdatedEl.textContent = 'last updated ' + now.toLocaleString('en-PH', {dateStyle:'medium', timeStyle:'short'});
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  const SAVINGS_MILESTONES = [20000, 50000, 100000, 150000, 250000];
+
+  function renderSavingsMilestones(total){
+    let achieved = 0;
+    for(let i=0;i<SAVINGS_MILESTONES.length;i++){
+      if(total >= SAVINGS_MILESTONES[i]) achieved = i+1;
+      else break;
+    }
+    savingsMilestonesEl.innerHTML = Array.from({length: SAVINGS_MILESTONES.length}, (_,i)=>
+      `<span class="milestone-dot ${i < achieved ? 'achieved' : ''}"></span>`
+    ).join('');
+    if(achieved >= SAVINGS_MILESTONES.length){
+      savingsMilestoneLabelEl.textContent = `Milestone ${SAVINGS_MILESTONES.length} of ${SAVINGS_MILESTONES.length} — You've Reached ${fmt(SAVINGS_MILESTONES[SAVINGS_MILESTONES.length-1])}!`;
+    } else {
+      const nextTarget = SAVINGS_MILESTONES[achieved];
+      savingsMilestoneLabelEl.textContent = `Milestone ${achieved} of ${SAVINGS_MILESTONES.length} — Next Milestone at ${fmt(nextTarget)}`;
+    }
+    return achieved;
+  }
+
+  function render(){
+    const total = accounts.reduce((s,a)=>s+Number(a.balance||0),0);
+    totalEl.textContent = hideSavingsTotal ? MASK_STRING : fmt(total);
+    countEl.textContent = accounts.length + (accounts.length===1 ? ' account' : ' accounts');
+    renderSavingsMilestones(total);
+
+    grid.innerHTML = '';
+    accounts.forEach((acc, idx)=>{
+      const hasGoal = acc.goal && acc.goal > 0;
+      const progressPct = hasGoal ? Math.min(100, (acc.balance / acc.goal) * 100) : 0;
+      const goalReached = hasGoal && acc.balance >= acc.goal;
+      let dailyNeeded = null;
+      let goalDateLabel = '';
+      if(hasGoal && !goalReached && acc.goalTargetDate){
+        const remaining = acc.goal - acc.balance;
+        const targetTs = new Date(acc.goalTargetDate + 'T00:00:00').getTime();
+        const daysLeft = Math.max(1, Math.ceil((targetTs - Date.now()) / 86400000));
+        dailyNeeded = remaining / daysLeft;
+        goalDateLabel = new Date(acc.goalTargetDate + 'T00:00:00').toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}).replace(',', '');
+      }
+      const theme = goalReached ? FINISHED_THEME : themeFor(idx);
+      const card = document.createElement('div');
+      card.className = 'card' + (total >= SAVINGS_MILESTONES[SAVINGS_MILESTONES.length-1] ? ' milestone-gold' : '');
+      card.style.background = theme.bg;
+      card.style.borderLeftColor = theme.border;
+      card.style.setProperty('--card-accent', theme.text);
+      card.style.setProperty('--card-hover', theme.hover);
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="logo-wrap" data-logo="${acc.id}">${logoHtml(acc.name)}</div>
+          <div class="name-field">
+            <input class="acct-name" data-name="${acc.id}" value="${escapeHtml(acc.name)}" spellcheck="false">
+            <input class="acct-number" data-number="${acc.id}" value="${escapeHtml(acc.accountNumber || '')}" placeholder="Account Number" spellcheck="false">
+          </div>
+          <button class="eye-btn" data-eye="${acc.id}" aria-label="toggle amount visibility">${acc.hidden ? EYE_OFF_SVG : EYE_OPEN_SVG}</button>
+          <button class="del-btn" data-del="${acc.id}" aria-label="delete account">&times;</button>
+        </div>
+        <p class="acct-balance">${acc.hidden ? MASK_STRING : fmt(acc.balance)}</p>
+        ${hasGoal ? `<p class="goal-progress-text">${progressPct.toFixed(0)}% of ${fmt(acc.goal)}</p>` : ''}
+        ${dailyNeeded !== null ? `<p class="goal-progress-text">\u20B1${Math.round(dailyNeeded).toLocaleString('en-PH')} per day until ${goalDateLabel}</p>` : ''}
+        ${goalReached ? `<p class="goal-reached-note">Target goal reached!</p>` : ''}
+        <div class="controls" data-controls="${acc.id}">
+          <button class="ctrl-btn minus" data-minus="${acc.id}">&minus;</button>
+          <button class="ctrl-btn" data-plus="${acc.id}">+</button>
+        </div>
+        <div class="editor" data-editor="${acc.id}"></div>
+        <button class="history-link" data-history="${acc.id}">View History</button>
+        <button class="history-link" data-edit-goal="${acc.id}">Edit Goals</button>
+        <button class="history-link calc-link">Calculator</button>
+      `;
+      grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('[data-plus]').forEach(b=>b.addEventListener('click', ()=>openEdit(b.getAttribute('data-plus'), 1)));
+    grid.querySelectorAll('[data-minus]').forEach(b=>b.addEventListener('click', ()=>openEdit(b.getAttribute('data-minus'), -1)));
+    grid.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>removeAccount(b.getAttribute('data-del'))));
+    grid.querySelectorAll('[data-eye]').forEach(b=>b.addEventListener('click', ()=>toggleAccountHidden(b.getAttribute('data-eye'))));
+    grid.querySelectorAll('[data-history]').forEach(b=>b.addEventListener('click', ()=>openHistory('account', b.getAttribute('data-history'))));
+    grid.querySelectorAll('[data-name]').forEach(inp=>{
+      inp.addEventListener('change', ()=>renameAccount(inp.getAttribute('data-name'), inp.value));
+      inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ inp.blur(); } });
+    });
+    grid.querySelectorAll('[data-number]').forEach(inp=>{
+      inp.addEventListener('change', ()=>updateAccountNumber(inp.getAttribute('data-number'), inp.value));
+      inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ inp.blur(); } });
+    });
+    grid.querySelectorAll('[data-edit-goal]').forEach(b=>b.addEventListener('click', ()=>editGoal(b.getAttribute('data-edit-goal'))));
+    grid.querySelectorAll('.calc-link').forEach(b=>b.addEventListener('click', openCalculator));
+  }
+
+  function updateHideSavingsTotalButton(){
+    hideSavingsTotalIconEl.innerHTML = hideSavingsTotal ? EYE_OFF_SVG : EYE_OPEN_SVG;
+    hideSavingsTotalTextEl.textContent = hideSavingsTotal ? 'Show Total Savings' : 'Hide Total Savings';
+    hideSavingsTotalBtn.classList.toggle('active', hideSavingsTotal);
+  }
+
+  function updateHideLoanTotalButton(){
+    hideLoanTotalIconEl.innerHTML = hideLoanTotal ? EYE_OFF_SVG : EYE_OPEN_SVG;
+    hideLoanTotalTextEl.textContent = hideLoanTotal ? 'Show Total Loan' : 'Hide Total Loan';
+    hideLoanTotalBtn.classList.toggle('active', hideLoanTotal);
+  }
+
+  function loadHideAllState(){
+    try{ hideSavingsTotal = localStorage.getItem(HIDE_SAVINGS_TOTAL_KEY) === 'true'; }catch(e){ hideSavingsTotal = false; }
+    try{ hideLoanTotal = localStorage.getItem(HIDE_LOAN_TOTAL_KEY) === 'true'; }catch(e){ hideLoanTotal = false; }
+    updateHideSavingsTotalButton();
+    updateHideLoanTotalButton();
+  }
+
+  hideSavingsTotalBtn.addEventListener('click', ()=>{
+    hideSavingsTotal = !hideSavingsTotal;
+    try{ localStorage.setItem(HIDE_SAVINGS_TOTAL_KEY, String(hideSavingsTotal)); }catch(e){}
+    updateHideSavingsTotalButton();
+    render();
+  });
+
+  hideLoanTotalBtn.addEventListener('click', ()=>{
+    hideLoanTotal = !hideLoanTotal;
+    try{ localStorage.setItem(HIDE_LOAN_TOTAL_KEY, String(hideLoanTotal)); }catch(e){}
+    updateHideLoanTotalButton();
+    renderLoans();
+  });
+
+  function toggleAccountHidden(id){
+    const acc = accounts.find(a=>a.id===id);
+    if(acc){
+      acc.hidden = !acc.hidden;
+      save();
+      render();
+    }
+  }
+
+  function toggleLoanHidden(id){
+    const loan = loans.find(l=>l.id===id);
+    if(loan){
+      loan.hidden = !loan.hidden;
+      saveLoans();
+      renderLoans();
+    }
+  }
+
+  function renameAccount(id, newName){
+    const acc = accounts.find(a=>a.id===id);
+    if(acc){
+      const trimmed = newName.trim();
+      acc.name = trimmed || acc.name;
+      save();
+      render();
+    }
+  }
+
+  function updateAccountNumber(id, value){
+    const acc = accounts.find(a=>a.id===id);
+    if(acc){
+      acc.accountNumber = value.trim();
+      save();
+    }
+  }
+
+  function editGoal(id){
+    const acc = accounts.find(a=>a.id===id);
+    if(!acc) return;
+    currentGoalEditId = id;
+    goalAmountInput.value = acc.goal || '';
+    goalDateInput.value = acc.goalTargetDate || '';
+    goalModal.classList.add('open');
+  }
+
+  function closeGoalModal(){
+    goalModal.classList.remove('open');
+    currentGoalEditId = null;
+  }
+
+  goalModalSave.addEventListener('click', ()=>{
+    const acc = accounts.find(a=>a.id===currentGoalEditId);
+    if(!acc){ closeGoalModal(); return; }
+    const parsed = parseFloat(goalAmountInput.value);
+    acc.goal = (!isNaN(parsed) && parsed > 0) ? parsed : 0;
+    acc.goalTargetDate = goalDateInput.value || '';
+    save();
+    render();
+    closeGoalModal();
+  });
+
+  goalModalCancel.addEventListener('click', closeGoalModal);
+  goalModalClose.addEventListener('click', closeGoalModal);
+  goalModal.addEventListener('click', (e)=>{
+    if(e.target === goalModal) closeGoalModal();
+  });
+
+  let calcDisplay = '0';
+  let calcFirstOperand = null;
+  let calcOperator = null;
+  let calcWaitingForSecond = false;
+
+  function calcUpdateDisplay(){
+    calcDisplayEl.textContent = calcDisplay;
+  }
+
+  function calcCompute(a, b, op){
+    switch(op){
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/': return b === 0 ? NaN : a / b;
+      default: return b;
+    }
+  }
+
+  function calcInputDigit(d){
+    if(calcWaitingForSecond){
+      calcDisplay = d;
+      calcWaitingForSecond = false;
+    } else {
+      calcDisplay = calcDisplay === '0' ? d : calcDisplay + d;
+    }
+    calcUpdateDisplay();
+  }
+
+  function calcInputDecimal(){
+    if(calcWaitingForSecond){
+      calcDisplay = '0.';
+      calcWaitingForSecond = false;
+    } else if(!calcDisplay.includes('.')){
+      calcDisplay += '.';
+    }
+    calcUpdateDisplay();
+  }
+
+  function calcHandleOperator(nextOp){
+    const inputValue = parseFloat(calcDisplay);
+    if(calcOperator && calcWaitingForSecond){
+      calcOperator = nextOp;
+      return;
+    }
+    if(calcFirstOperand === null){
+      calcFirstOperand = inputValue;
+    } else if(calcOperator){
+      const result = calcCompute(calcFirstOperand, inputValue, calcOperator);
+      calcDisplay = String(Math.round(result * 1e10) / 1e10);
+      calcFirstOperand = result;
+      calcUpdateDisplay();
+    }
+    calcWaitingForSecond = true;
+    calcOperator = nextOp;
+  }
+
+  function calcEquals(){
+    if(calcOperator === null || calcFirstOperand === null) return;
+    const inputValue = parseFloat(calcDisplay);
+    const result = calcCompute(calcFirstOperand, inputValue, calcOperator);
+    calcDisplay = String(Math.round(result * 1e10) / 1e10);
+    calcFirstOperand = null;
+    calcOperator = null;
+    calcWaitingForSecond = true;
+    calcUpdateDisplay();
+  }
+
+  function calcPercent(){
+    const value = parseFloat(calcDisplay);
+    calcDisplay = String(value / 100);
+    calcUpdateDisplay();
+  }
+
+  function calcClear(){
+    calcDisplay = '0';
+    calcFirstOperand = null;
+    calcOperator = null;
+    calcWaitingForSecond = false;
+    calcUpdateDisplay();
+  }
+
+  function calcBackspace(){
+    calcDisplay = calcDisplay.length > 1 ? calcDisplay.slice(0, -1) : '0';
+    calcUpdateDisplay();
+  }
+
+  document.querySelectorAll('#calculator-modal [data-digit]').forEach(btn=>{
+    btn.addEventListener('click', ()=>calcInputDigit(btn.getAttribute('data-digit')));
+  });
+  document.querySelectorAll('#calculator-modal [data-op]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const op = btn.getAttribute('data-op');
+      if(op === '%'){ calcPercent(); } else { calcHandleOperator(op); }
+    });
+  });
+  document.querySelector('#calculator-modal [data-action="clear"]').addEventListener('click', calcClear);
+  document.querySelector('#calculator-modal [data-action="backspace"]').addEventListener('click', calcBackspace);
+  document.querySelector('#calculator-modal [data-action="decimal"]').addEventListener('click', calcInputDecimal);
+  document.querySelector('#calculator-modal [data-action="equals"]').addEventListener('click', calcEquals);
+
+  function openCalculator(){
+    calcClear();
+    calculatorModal.classList.add('open');
+  }
+
+  function closeCalculator(){
+    calculatorModal.classList.remove('open');
+  }
+
+  calculatorModalClose.addEventListener('click', closeCalculator);
+  calculatorModal.addEventListener('click', (e)=>{
+    if(e.target === calculatorModal) closeCalculator();
+  });
+
+  function openEdit(id, sign){
+    if(openEditorId && openEditorId !== id){ closeEditor(openEditorId); }
+    const editorDiv = grid.querySelector(`[data-editor="${id}"]`);
+    const controlsDiv = grid.querySelector(`[data-controls="${id}"]`);
+    if(!editorDiv) return;
+
+    if(editorDiv.style.display === 'flex' && editorDiv.dataset.sign == sign){
+      closeEditor(id);
+      return;
+    }
+
+    editorDiv.dataset.sign = sign;
+    editorDiv.style.display = 'flex';
+    controlsDiv.style.display = 'none';
+    editorDiv.innerHTML = `
+      <input type="number" step="0.01" min="0" placeholder="${sign>0 ? 'amount to add' : 'amount to subtract'}" data-amount-input="${id}">
+      <button data-confirm="${id}" aria-label="confirm">&check;</button>
+      <button data-cancel="${id}" aria-label="cancel">&times;</button>
+    `;
+    openEditorId = id;
+    const input = editorDiv.querySelector('[data-amount-input]');
+    input.focus();
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ confirmEdit(id); }
+      if(e.key === 'Escape'){ closeEditor(id); }
+    });
+    editorDiv.querySelector('[data-confirm]').addEventListener('click', ()=>confirmEdit(id));
+    editorDiv.querySelector('[data-cancel]').addEventListener('click', ()=>closeEditor(id));
+  }
+
+  function closeEditor(id){
+    const editorDiv = grid.querySelector(`[data-editor="${id}"]`);
+    const controlsDiv = grid.querySelector(`[data-controls="${id}"]`);
+    if(editorDiv){ editorDiv.style.display = 'none'; editorDiv.innerHTML = ''; }
+    if(controlsDiv){ controlsDiv.style.display = 'flex'; }
+    openEditorId = null;
+  }
+
+  function confirmEdit(id){
+    const editorDiv = grid.querySelector(`[data-editor="${id}"]`);
+    const sign = Number(editorDiv.dataset.sign);
+    const input = editorDiv.querySelector('[data-amount-input]');
+    const val = parseFloat(input.value);
+    if(!isNaN(val) && val > 0){
+      const acc = accounts.find(a=>a.id===id);
+      if(acc){
+        acc.balance = Math.max(0, Number(acc.balance||0) + sign*val);
+        if(!Array.isArray(acc.history)) acc.history = [];
+        acc.history.unshift({ ts: Date.now(), delta: sign*val, balanceAfter: acc.balance });
+        save();
+      }
+    }
+    closeEditor(id);
+    render();
+  }
+
+  function removeAccount(id){
+    if(!confirm('Are you sure you want to delete this entry?')) return;
+    accounts = accounts.filter(a=>a.id!==id);
+    save();
+    render();
+  }
+
+  function openHistory(type, id){
+    currentHistoryType = type;
+    currentHistoryId = id;
+    currentHistoryDays = 'all';
+    const item = type === 'loan' ? loans.find(l=>l.id===id) : accounts.find(a=>a.id===id);
+    if(!item) return;
+    historyModalTitle.textContent = item.name + ' history';
+    updateFilterButtons();
+    renderHistoryList();
+    historyModal.classList.add('open');
+  }
+
+  function updateFilterButtons(){
+    historyFilters.querySelectorAll('.filter-btn').forEach(btn=>{
+      btn.classList.toggle('active', btn.getAttribute('data-days') === currentHistoryDays);
+    });
+  }
+
+  function renderHistoryList(){
+    const item = currentHistoryType === 'loan' ? loans.find(l=>l.id===currentHistoryId) : accounts.find(a=>a.id===currentHistoryId);
+    if(!item) return;
+    let entries = item.history || [];
+    if(currentHistoryDays !== 'all'){
+      const cutoff = Date.now() - Number(currentHistoryDays) * 24 * 60 * 60 * 1000;
+      entries = entries.filter(e=>e.ts >= cutoff);
+    }
+    if(!entries.length){
+      historyModalBody.innerHTML = `<p class="history-empty">No changes in this period.</p>`;
+    } else if(currentHistoryType === 'loan'){
+      historyModalBody.innerHTML = entries.map(e=>{
+        const dateStr = new Date(e.ts).toLocaleString('en-PH', {dateStyle:'medium', timeStyle:'short'});
+        return `
+          <div class="history-row">
+            <span class="history-date">${dateStr}</span>
+            <span class="history-amounts">
+              <div class="history-delta neg">-${fmt(e.amount)}</div>
+              <div class="history-balance">installment ${e.installmentNumber} of ${item.installmentsTotal}</div>
+            </span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      historyModalBody.innerHTML = entries.map(e=>{
+        const isPos = e.delta > 0;
+        const dateStr = new Date(e.ts).toLocaleString('en-PH', {dateStyle:'medium', timeStyle:'short'});
+        return `
+          <div class="history-row">
+            <span class="history-date">${dateStr}</span>
+            <span class="history-amounts">
+              <div class="history-delta ${isPos ? 'pos' : 'neg'}">${isPos ? '+' : '-'}${fmt(Math.abs(e.delta))}</div>
+              <div class="history-balance">balance: ${fmt(e.balanceAfter)}</div>
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  historyFilters.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentHistoryDays = btn.getAttribute('data-days');
+      updateFilterButtons();
+      renderHistoryList();
+    });
+  });
+
+  function closeHistory(){
+    historyModal.classList.remove('open');
+    currentHistoryId = null;
+  }
+
+  historyModalClose.addEventListener('click', closeHistory);
+  historyModal.addEventListener('click', (e)=>{
+    if(e.target === historyModal) closeHistory();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && historyModal.classList.contains('open')) closeHistory();
+    if(e.key === 'Escape' && goalModal.classList.contains('open')) closeGoalModal();
+    if(e.key === 'Escape' && calculatorModal.classList.contains('open')) closeCalculator();
+  });
+
+  addBtn.addEventListener('click', ()=>{
+    const name = prompt('Account name');
+    if(name && name.trim()){
+      accounts.push({id:'a'+Date.now(), name:name.trim(), balance:0, history:[], accountNumber:'', hidden:false, goal:0, goalTargetDate:''});
+      save();
+      render();
+    }
+  });
+
+  loadHideAllState();
+  load();
+  loadLoans();
+})();
+
+if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
   });
 }
+
 </script>
 </body>
 </html>
